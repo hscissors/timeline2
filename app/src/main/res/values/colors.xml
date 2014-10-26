@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary_light">#abd8f0</color>
+    <color name="primary">#3498db</color>
+    <color name="primary_dark">#2980b9</color>
+
+    <color name="alternate_dark">#39454D</color>
+
+    <color name="text_primary_light">#ffffff</color>
+    <color name="text_primary">#2a2a2a</color>
+    <color name="text_primary_dark">#665e5e</color>
+
+    <color name="list_bg">#f6f6f6</color>
+    <color name="empty_text">#bdbdbd</color>
+
+    <!-- UNUSED -->
+
+
+    <color name="list_highlight">#eeeeee</color>
+
+    <color name="edit_text_stroke">#e4e4e4</color>
+    <color name="edit_text_bg_default">#f6f6f6</color>
+
+    <color name="btn_stroke">#ababab</color>
+    <color name="btn_start_default">#48a2ce</color>
+    <color name="btn_end_default">#5297ba</color>
+    <color name="btn_pressed">#77bfe4</color>
+    <color name="btn_disabled">#9aaeb7</color>
+    <color name="btn_disabled_stroke">#c4c4c4</color>
+
+
+</resources>

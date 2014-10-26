@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<familyset>
+
+    <!-- Some Font. Can be referenced with 'someFont' or 'aspergit' -->
+    <family>
+        <nameset>
+            <name>montserrat</name>
+        </nameset>
+        <fileset>
+            <file>Montserrat-Bold.otf</file>
+            <file>Montserrat-Regular.otf</file>
+        </fileset>
+    </family>
+
+</familyset>
