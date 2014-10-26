@@ -3,8 +3,4 @@
         <item name="android:fontFamily">montserrat</item>
         <item name="android:textStyle">normal</item>
     </style>
-
-    <style name="TimelineCardHeader" parent="card.header_outer_layout">
-        <item name="android:padding">30dp</item>
-    </style>
 </resources>
