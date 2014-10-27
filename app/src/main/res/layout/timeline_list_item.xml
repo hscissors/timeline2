@@ -3,41 +3,75 @@
     android:layout_gravity="center"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    card_view:cardCornerRadius="0dp">
-
-    <FrameLayout
+    card_view:cardCornerRadius="0dp"
+    android:layout_marginLeft="50dp"
+    android:layout_marginRight="50dp"
+    android:layout_marginBottom="10dp">
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-
-        <LinearLayout
+        <ImageView
+            android:id="@+id/timeline_thumbnail"
+            android:layout_width="match_parent"
+            android:minHeight="100dp"
+            android:maxHeight="300dp"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"/>
+        <View
+            android:layout_below="@id/timeline_thumbnail"
+            android:id="@+id/timeline_color"
+            android:layout_width="match_parent"
+            android:minHeight="10dp"
+            android:background="#ff0000"
+            android:layout_height="wrap_content"/>
+        <RelativeLayout
+            android:layout_below="@id/timeline_color"
             android:id="@+id/timeline_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="10dp">
-
-            <View
-                android:id="@+id/timeline_color"
-                android:layout_width="5dp"
-                android:background="#ff0000"
-                android:layout_height="match_parent"
-                android:layout_marginRight="10dp" />
+            android:orientation="vertical"
+            android:padding="10dp"
+            android:background="@color/list_bg">
 
             <TextView
+                android:fontFamily="sans-serif-thin"
                 android:id="@+id/timeline_title"
+                android:textSize="50sp"
+                android:textColor="@color/text_primary"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <TextView
-                android:id="@+id/timeline_desc"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
+                android:layout_height="wrap_content"
+                android:text="title"
+                android:singleLine="true" />
 
-        <Button
-            android:layout_gravity="bottom|right"
+            <TextView
+                android:layout_below="@id/timeline_title"
+                android:id="@+id/timeline_desc"
+                android:fontFamily="sans-serif-light"
+                android:textColor="@color/text_primary_dark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:text="description" />
+
+            <TextView
+                android:id="@+id/timeline_event_count"
+                android:fontFamily="sans-serif-light"
+                android:textColor="@color/empty_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/timeline_desc"
+                android:text="Total Events: 10" />
+        </RelativeLayout>
+
+        <ImageButton
+            android:padding="8dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
             android:id="@+id/timeline_list_item_menu_button"
+            android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha"
+            android:background="@android:color/transparent"
+            android:tint="@color/text_primary"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=":" />
-    </FrameLayout>
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
 </android.support.v7.widget.CardView>

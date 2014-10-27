@@ -1,4 +1,4 @@
-package com.soundsofpolaris.timeline.database;
+package com.soundsofpolaris.timeline.tools;
 
 import android.content.ContentValues;
 import android.content.Context;

@@ -3,6 +3,7 @@ package com.soundsofpolaris.timeline.timeline;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,6 +17,8 @@ import com.soundsofpolaris.timeline.models.Timeline;
 import java.util.ArrayList;
 
 public class TimelineListFragment extends Fragment {
+
+    private RecyclerView mtimelineList;
 
     public static TimelineListFragment newInstance() {
         TimelineListFragment fragment = new TimelineListFragment();
@@ -40,10 +43,10 @@ public class TimelineListFragment extends Fragment {
 
         FrameLayout rootView = (FrameLayout) inflater.inflate(R.layout.timeline_list_fragement, container, false);
 
-        RecyclerView timelineList = (RecyclerView) rootView.findViewById(R.id.timeline_list);
-        timelineList.setHasFixedSize(true);
-        timelineList.setAdapter(new TimelineListAdapter(timelines));
-        timelineList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mtimelineList = (RecyclerView) rootView.findViewById(R.id.timeline_list);
+        mtimelineList.setHasFixedSize(true);
+        mtimelineList.setAdapter(new TimelineListAdapter(timelines));
+        mtimelineList.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         return rootView;
     }
@@ -51,6 +54,18 @@ public class TimelineListFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+
+        mtimelineList.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if(newState == RecyclerView.SCROLL_STATE_IDLE || newState == RecyclerView.SCROLL_STATE_SETTLING){
+                    ((ActionBarActivity )getActivity()).getSupportActionBar().show();
+                } else {
+                    ((ActionBarActivity )getActivity()).getSupportActionBar().hide();
+                }
+            }
+        });
     }
 
     @Override
