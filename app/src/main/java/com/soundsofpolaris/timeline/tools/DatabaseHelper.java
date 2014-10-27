@@ -9,7 +9,7 @@ import android.util.Log;
 import android.util.Pair;
 
 import com.soundsofpolaris.timeline.Constants;
-import com.soundsofpolaris.timeline.models.Events;
+import com.soundsofpolaris.timeline.models.Event;
 import com.soundsofpolaris.timeline.models.Timeline;
 
 import java.util.ArrayList;
@@ -192,10 +192,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public Events getEventById(int eid) {
+    public Event getEventById(int eid) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(RawQueries.GET_EVENT_BY_ID(eid), null);
-        Events e = null;
+        Event e = null;
         if (c.moveToNext()) {
             do {
                 int id = c.getInt(c.getColumnIndex(ID_COL));
@@ -209,7 +209,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 int isAllMonth = c.getInt(c.getColumnIndex(ALLMONTH_COL));
                 int groupId = c.getInt(c.getColumnIndex(GROUP_ID_COL));
                 int groupColor = c.getInt(c.getColumnIndex(GROUP_COLOR_COL));
-                e = new Events(id, year, month, date, title, desc, isAllYear, isAllMonth, groupId, groupColor, groupName);
+                e = new Event(id, year, month, date, title, desc, isAllYear, isAllMonth, groupId, groupColor, groupName);
             } while (c.moveToNext());
         }
 
@@ -309,7 +309,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return groups;
     }
 
-    public List<Pair<String, List<Events>>> getAllEventsByGroupSet(List<Integer> groups) {
+    public List<Pair<String, List<Event>>> getAllEventsByGroupSet(List<Integer> groups) {
         StringBuilder SQLfiedGroup = new StringBuilder();
         for (int i = 0; i < groups.size(); i++) {
             if (i != groups.size() - 1) {
@@ -322,11 +322,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return getAllEventsByGroup(SQLfiedGroup.toString());
     }
 
-    public List<Pair<String, List<Events>>> getAllEventsByGroup(String group) {
+    public List<Pair<String, List<Event>>> getAllEventsByGroup(String group) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(RawQueries.ALL_EVENTS_BY_GROUP(group), null);
 
-        List<Pair<String, List<Events>>> events = parseEvents(c);
+        List<Pair<String, List<Event>>> events = parseEvents(c);
         db.close();
 
         return events;
@@ -343,9 +343,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //		return events;
 //	}
 
-    public List<Pair<String, List<Events>>> parseEvents(Cursor c) {
-        ArrayList<Events> le = new ArrayList<Events>();
-        ArrayList<Pair<String, List<Events>>> years = new ArrayList<Pair<String, List<Events>>>();
+    public List<Pair<String, List<Event>>> parseEvents(Cursor c) {
+        ArrayList<Event> le = new ArrayList<Event>();
+        ArrayList<Pair<String, List<Event>>> years = new ArrayList<Pair<String, List<Event>>>();
         if (c.moveToNext()) {
             do {
                 int id = c.getInt(c.getColumnIndex(ID_COL));
@@ -359,7 +359,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String groupName = c.getString(c.getColumnIndex(GROUP_NAME_COL));
                 int groupId = c.getInt(c.getColumnIndex(GROUP_ID_COL));
                 int groupColor = c.getInt(c.getColumnIndex(GROUP_COLOR_COL));
-                le.add(new Events(id, year, month, date, title, desc, isAllYear, isAllMonth, groupId, groupColor, groupName));
+                le.add(new Event(id, year, month, date, title, desc, isAllYear, isAllMonth, groupId, groupColor, groupName));
             } while (c.moveToNext());
 
             Log.d(Constants.LOG, "Raw array size@DatebaseHelper.getAllEvents(): " + le.size());
@@ -371,7 +371,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 if (years.size() > 0) {
                     for (int j = 0; j < years.size(); j++) { //Now for every year in the sorted list...
                         if (years.get(j).first.equals(year) && years.get(j) != null) {
-                            ArrayList<Events> events = (ArrayList<Events>) years.get(j).second;
+                            ArrayList<Event> events = (ArrayList<Event>) years.get(j).second;
                             events.add(le.get(i));
                             Log.d(Constants.LOG, "Add item to exsisting year: " + years.get(j).second + " which has a events array " + events.size());
                             found = true;
@@ -380,9 +380,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 }
 
                 if (years.size() == 0 || found == false) {
-                    ArrayList<Events> events = new ArrayList<Events>();
+                    ArrayList<Event> events = new ArrayList<Event>();
                     events.add(le.get(i));
-                    years.add(new Pair<String, List<Events>>(year, events));
+                    years.add(new Pair<String, List<Event>>(year, events));
                     Log.d(Constants.LOG, "Add item to new year: " + year + " which has a events array " + events.size());
                 }
             }

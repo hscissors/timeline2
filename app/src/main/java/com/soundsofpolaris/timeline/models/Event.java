@@ -2,7 +2,7 @@ package com.soundsofpolaris.timeline.models;
 
 import java.text.SimpleDateFormat;
 
-public class Events {
+public class Event {
 	private int id;
 	private int year;
 	private int month;
@@ -15,7 +15,7 @@ public class Events {
 	private Boolean isAllYear;
 	private Boolean isAllMonth;
 	
-	public Events(int id, int year, int month, long date, String title, String desc, int isAllYear, int isAllMonth, int groupId, int groupColor, String groupName){
+	public Event(int id, int year, int month, long date, String title, String desc, int isAllYear, int isAllMonth, int groupId, int groupColor, String groupName){
 		this.id = id;
 		this.year = year;
 		this.month = month;

@@ -34,19 +34,31 @@ public class TimelineListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final ArrayList<Timeline> timelines = new ArrayList();
-        timelines.add(new Timeline(0, "World War II", 0xffe74c3c));
-        timelines.add(new Timeline(0, "World War II", 0xffe74c3c));
-        timelines.add(new Timeline(0, "World War II", 0xffe74c3c));
-        timelines.add(new Timeline(0, "World War II", 0xffe74c3c));
-        timelines.add(new Timeline(0, "World War II", 0xffe74c3c));
-        timelines.add(new Timeline(0, "World War II", 0xffe74c3c));
+        timelines.add(new Timeline(0, "Horsehead Nebula", 0xffe74c3c));
+        timelines.add(new Timeline(0, "Horsehead Nebula", 0xffe74c3c));
+        timelines.add(new Timeline(0, "Horsehead Nebula", 0xffe74c3c));
+        timelines.add(new Timeline(0, "Horsehead Nebula", 0xffe74c3c));
+        timelines.add(new Timeline(0, "Horsehead Nebula", 0xffe74c3c));
+        timelines.add(new Timeline(0, "Horsehead Nebula", 0xffe74c3c));
 
         FrameLayout rootView = (FrameLayout) inflater.inflate(R.layout.timeline_list_fragement, container, false);
 
         mtimelineList = (RecyclerView) rootView.findViewById(R.id.timeline_list);
-        mtimelineList.setHasFixedSize(true);
+//        mtimelineList.setHasFixedSize(true);
         mtimelineList.setAdapter(new TimelineListAdapter(timelines));
         mtimelineList.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        mtimelineList.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if(newState == RecyclerView.SCROLL_STATE_IDLE){
+                    ((ActionBarActivity )getActivity()).getSupportActionBar().show();
+                } else {
+                    ((ActionBarActivity )getActivity()).getSupportActionBar().hide();
+                }
+            }
+        });
 
         return rootView;
     }
@@ -54,18 +66,6 @@ public class TimelineListFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-
-        mtimelineList.setOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                if(newState == RecyclerView.SCROLL_STATE_IDLE || newState == RecyclerView.SCROLL_STATE_SETTLING){
-                    ((ActionBarActivity )getActivity()).getSupportActionBar().show();
-                } else {
-                    ((ActionBarActivity )getActivity()).getSupportActionBar().hide();
-                }
-            }
-        });
     }
 
     @Override
