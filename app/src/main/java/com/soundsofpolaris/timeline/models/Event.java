@@ -44,6 +44,16 @@ public class Event {
 	public int getYear(){
 		return year;
 	}
+
+    public String getMonth(){
+        //TODO Format month
+        return "Oct";
+    }
+
+    public String getDay(){
+        //TODO Format day
+        return "12";
+    }
 	
 	public String getPrettyDate(){
 		SimpleDateFormat sf;

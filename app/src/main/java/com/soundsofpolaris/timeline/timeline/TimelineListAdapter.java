@@ -15,11 +15,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.soundsofpolaris.timeline.R;
@@ -29,32 +33,20 @@ import com.soundsofpolaris.timeline.models.Timeline;
 import com.soundsofpolaris.timeline.tools.FileHelper;
 
 import java.util.ArrayList;
+import java.util.zip.Inflater;
 
 public class TimelineListAdapter extends RecyclerView.Adapter<TimelineListAdapter.ViewHolder> {
 
     private final Bitmap mImage;
     private int mColor;
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        private final LinearLayout mEditLayout;
-        private final RelativeLayout mLayout;
-        private final ImageView mThumbnail;
-        private final View mColor;
-        private final TextView mTitle;
-        private final TextView mDesc;
+    ArrayList<Timeline> mTimelines;
 
-        public ViewHolder(CardView v) {
+    public static class ViewHolder extends TimelineListItemViewHolder{
+        public ViewHolder(View v){
             super(v);
-            mEditLayout = (LinearLayout) v.findViewById(R.id.card_edit_layout);
-            mLayout = (RelativeLayout) v.findViewById(R.id.card_layout);
-            mThumbnail = (ImageView) v.findViewById(R.id.timeline_thumbnail);
-            mColor = v.findViewById(R.id.timeline_color);
-            mTitle = (TextView) v.findViewById(R.id.timeline_title);
-            mDesc = (TextView) v.findViewById(R.id.timeline_desc);
         }
     }
-
-    ArrayList<Timeline> mTimelines;
 
     public TimelineListAdapter(ArrayList<Timeline> timelines) {
         mTimelines = timelines;
@@ -66,34 +58,9 @@ public class TimelineListAdapter extends RecyclerView.Adapter<TimelineListAdapte
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        CardView card = (CardView) LayoutInflater.from(viewGroup.getContext())
+        View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.timeline_list_item, viewGroup, false);
-        final ViewHolder vh = new ViewHolder(card);
-
-        ImageButton listItemMenuButton = (ImageButton) card.findViewById(R.id.timeline_list_item_menu_button);
-
-        listItemMenuButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PopupMenu menu = new PopupMenu(v.getContext(), v);
-                menu.inflate(R.menu.timeline_list_item_menu);
-                menu.show();
-                menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        int id = item.getItemId();
-                        switch (id) {
-                            case R.id.action_share:
-                                return true;
-                            case R.id.action_edit:
-                                vh.mLayout.setVisibility(View.GONE);
-                                vh.mEditLayout.setVisibility(View.VISIBLE);
-                        }
-                        return false;
-                    }
-                });
-            }
-        });
+        final ViewHolder vh = new ViewHolder(view);
         return vh;
     }
 

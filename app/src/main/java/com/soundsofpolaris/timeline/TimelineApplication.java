@@ -1,8 +1,11 @@
 package com.soundsofpolaris.timeline;
 
 import android.app.Application;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.view.ViewConfiguration;
 
@@ -13,7 +16,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.Volley;
+import com.soundsofpolaris.timeline.base.BaseActivity;
+import com.soundsofpolaris.timeline.debug.Debug;
 import com.soundsofpolaris.timeline.debug.Logger;
+import com.soundsofpolaris.timeline.dialogs.MessageDialog;
 import com.soundsofpolaris.timeline.tools.DatabaseHelper;
 import com.soundsofpolaris.timeline.tools.FileHelper;
 import com.soundsofpolaris.timeline.tools.LruBitmapCache;
@@ -70,8 +76,18 @@ public class TimelineApplication extends Application {
                     }
                 })
         );
-
         mInstance = this;
+    }
+
+    public static void handleException(Error e){
+        FragmentManager fm = ((BaseActivity) getInstance().getBaseContext()).getSupportFragmentManager();
+        if(Debug.ENABLED){
+            MessageDialog messageDialog = MessageDialog.newInstance("Error", e.getMessage(), false);
+            messageDialog.show(fm, TAG);
+        } else {
+            MessageDialog messageDialog = MessageDialog.newInstance("Error", getInstance().getResources().getString(R.string.default_error_message), false);
+            messageDialog.show(fm, TAG);
+        }
     }
 
     public DatabaseHelper getDatabase() {

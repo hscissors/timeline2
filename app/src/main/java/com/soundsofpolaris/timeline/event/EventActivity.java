@@ -23,7 +23,7 @@ public class EventActivity extends BaseActivity {
         setContentView(R.layout.event_activity);
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, EventListFragment.newInstance())
+                    .add(R.id.container, EventListFragment.newInstance(0))
                     .commit();
         }
 

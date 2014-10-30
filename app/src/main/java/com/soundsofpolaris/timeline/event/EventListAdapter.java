@@ -1,174 +1,138 @@
 package com.soundsofpolaris.timeline.event;
 
-import android.content.Context;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.soundsofpolaris.timeline.R;
+import com.soundsofpolaris.timeline.gui.StickyRecyclerHeadersAdapter;
 import com.soundsofpolaris.timeline.models.Event;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 
-public class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements StickyRecyclerHeadersAdapter {
 
-    private final Context mContext;
-    private static final int SECTION_TYPE = 0;
-
-    private boolean mValid = true;
-    private int mSectionResourceId;
-    private int mTextResourceId;
-
-    private RecyclerView.Adapter mBaseAdapter;
-    private SparseArray<Section> mSections = new SparseArray<Section>();
-
-
+    private ArrayList<Event> mEvents;
     public EventListAdapter(ArrayList<Event> events) {
-
-        mSectionResourceId = sectionResourceId;
-        mTextResourceId = textResourceId;
-        mBaseAdapter = baseAdapter;
-        mContext = context;
-
-
-    }
-
-    public static class SectionViewHolder extends RecyclerView.ViewHolder {
-
-        public TextView mTitle;
-
-        public SectionViewHolder(View view,int mTextResourceid) {
-            super(view);
-            mTitle = (TextView) view.findViewById(mTextResourceid);
-        }
+        mEvents = events;
     }
 
     public static class EventViewHolder extends RecyclerView.ViewHolder {
 
+        public boolean isSelected;
+
+        public RelativeLayout mEventContainer;
         public TextView mMonth;
         public TextView mDay;
-        public LinearLayout mDataContainer;
+        public RelativeLayout mDateContainer;
         public TextView mTitle;
         public TextView mDesc;
 
         public EventViewHolder(View view) {
             super(view);
-            mTitle = (TextView) view.findViewById(mTextResourceid);
+            mTitle = (TextView) view.findViewById(R.id.event_title);
+            mDesc = (TextView) view.findViewById(R.id.event_description);
+
+            mDateContainer = (RelativeLayout) view.findViewById(R.id.event_date_container);
+            mMonth = (TextView) view.findViewById(R.id.event_month);
+            mDay = (TextView) view.findViewById(R.id.event_day);
+
+            mEventContainer = (RelativeLayout) view.findViewById(R.id.event_container);
         }
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int typeView) {
-        if (typeView == SECTION_TYPE) {
-            final View view = LayoutInflater.from(mContext).inflate(mSectionResourceId, parent, false);
-            return new SectionViewHolder(view,mTextResourceId);
-        }else{
-            return mBaseAdapter.onCreateViewHolder(parent, typeView -1);
-        }
-    }
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int typeView) {
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.event_list_item, viewGroup, false);;
+        ImageButton listItemMenuButton = (ImageButton) view.findViewById(R.id.event_list_item_menu_button);
 
-    @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder sectionViewHolder, int position) {
-        if (isSectionHeaderPosition(position)) {
-            ((SectionViewHolder)sectionViewHolder).title.setText(mSections.get(position).title);
-        }else{
-            mBaseAdapter.onBindViewHolder(sectionViewHolder,sectionedPositionToPosition(position));
-        }
+        final RecyclerView.ViewHolder vh = new EventViewHolder(view);
 
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return isSectionHeaderPosition(position)
-                ? SECTION_TYPE
-                : mBaseAdapter.getItemViewType(sectionedPositionToPosition(position)) +1 ;
-    }
-
-
-    public static class Section {
-        int firstPosition;
-        int sectionedPosition;
-        CharSequence title;
-
-        public Section(int firstPosition, CharSequence title) {
-            this.firstPosition = firstPosition;
-            this.title = title;
-        }
-
-        public CharSequence getTitle() {
-            return title;
-        }
-    }
-
-
-    public void setSections(Section[] sections) {
-        mSections.clear();
-
-        Arrays.sort(sections, new Comparator<Section>() {
+        listItemMenuButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public int compare(Section o, Section o1) {
-                return (o.firstPosition == o1.firstPosition)
-                        ? 0
-                        : ((o.firstPosition < o1.firstPosition) ? -1 : 1);
+            public void onClick(View v) {
+                PopupMenu menu = new PopupMenu(v.getContext(), v);
+                menu.inflate(R.menu.event_list_menu);
+                menu.show();
+                menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        int id = item.getItemId();
+                        switch (id) {
+                            case R.id.action_share:
+                                return true;
+                            case R.id.action_edit:
+//                                vh.mLayout.setVisibility(View.GONE);
+//                                vh.mEditLayout.setVisibility(View.VISIBLE);
+                                return true;
+                        }
+                        return false;
+                    }
+                });
             }
         });
-
-        int offset = 0; // offset positions for the headers we're adding
-        for (Section section : sections) {
-            section.sectionedPosition = section.firstPosition + offset;
-            mSections.append(section.sectionedPosition, section);
-            ++offset;
-        }
-
-        notifyDataSetChanged();
+        return vh;
     }
-
-    public int positionToSectionedPosition(int position) {
-        int offset = 0;
-        for (int i = 0; i < mSections.size(); i++) {
-            if (mSections.valueAt(i).firstPosition > position) {
-                break;
-            }
-            ++offset;
-        }
-        return position + offset;
-    }
-
-    public int sectionedPositionToPosition(int sectionedPosition) {
-        if (isSectionHeaderPosition(sectionedPosition)) {
-            return RecyclerView.NO_POSITION;
-        }
-
-        int offset = 0;
-        for (int i = 0; i < mSections.size(); i++) {
-            if (mSections.valueAt(i).sectionedPosition > sectionedPosition) {
-                break;
-            }
-            --offset;
-        }
-        return sectionedPosition + offset;
-    }
-
-    public boolean isSectionHeaderPosition(int position) {
-        return mSections.get(position) != null;
-    }
-
 
     @Override
-    public long getItemId(int position) {
-        return isSectionHeaderPosition(position)
-                ? Integer.MAX_VALUE - mSections.indexOfKey(position)
-                : mBaseAdapter.getItemId(sectionedPositionToPosition(position));
+    public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, final int pos) {
+        Event event = mEvents.get(pos);
+        ((EventViewHolder) viewHolder).mDateContainer.setBackgroundColor(event.getGroupColor());
+
+        ((EventViewHolder) viewHolder).mDay.setText(event.getDay());
+        ((EventViewHolder) viewHolder).mMonth.setText(event.getMonth());
+        ((EventViewHolder) viewHolder).mTitle.setText(event.getTitle());
+        ((EventViewHolder) viewHolder).mDesc.setText(event.getDescription());
+
+
+        ((EventViewHolder) viewHolder).mEventContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                RelativeLayout container = (RelativeLayout) v;
+                if(((EventViewHolder) viewHolder).isSelected){
+                    ((EventViewHolder) viewHolder).mDesc.setVisibility(View.GONE);
+                } else {
+                    ((EventViewHolder) viewHolder).mDesc.setVisibility(View.VISIBLE);
+                }
+
+                ((EventViewHolder) viewHolder).isSelected = !((EventViewHolder) viewHolder).isSelected;
+            }
+        });
+    }
+
+    @Override
+    public long getHeaderId(int position) {
+        return mEvents.get(position).getYear();
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateHeaderViewHolder(ViewGroup parent) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.event_list_section, parent, false);
+        return new RecyclerView.ViewHolder(view) {};
+    }
+
+    @Override
+    public void onBindHeaderViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+        TextView header = (TextView) viewHolder.itemView;
+        header.setText(String.valueOf(mEvents.get(position).getYear()));
     }
 
     @Override
     public int getItemCount() {
-        return (mValid ? mBaseAdapter.getItemCount() + mSections.size() : 0);
+        return mEvents.size();
     }
-
 }

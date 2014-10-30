@@ -35,4 +35,5 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:21.0.+'
     compile 'com.shamanland:fab:0.0.5'
     compile 'com.mcxiaoke.volley:library:1.0.7@aar'
+    compile 'org.jsoup:jsoup:1.8.1'
 }
