@@ -1,20 +1,17 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/card_container"
+    android:id="@+id/card_layout"
     android:layout_gravity="center"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     card_view:cardCornerRadius="0dp"
     android:layout_marginLeft="35dp"
     android:layout_marginRight="35dp"
-    android:layout_marginBottom="10dp">
+    android:layout_marginTop="10dp">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
         <RelativeLayout
-            android:id="@+id/card_layout"
+            android:id="@+id/item_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
@@ -83,84 +80,4 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </RelativeLayout>
-
-        <LinearLayout
-            android:id="@+id/card_edit_layout"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@color/alternate_dark">
-
-            <FrameLayout
-                android:id="@+id/timeline_edit_new_image"
-                android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:background="@android:color/transparent">
-
-                <ImageView
-                    android:layout_gravity="center"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:background="@android:color/transparent"
-                    android:src="@drawable/ic_action_new_picture_large" />
-            </FrameLayout>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="4dp"
-                android:background="@android:color/holo_green_dark">
-
-                <SeekBar
-                    android:id="@+id/timeline_edit_color_slider"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </FrameLayout>
-
-
-            <EditText
-                android:padding="4dp"
-                android:id="@+id/timeline_edit_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Title" />
-
-            <EditText
-                android:padding="4dp"
-                android:id="@+id/timeline_edit_description"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:lines="3"
-                android:hint="Description" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:showDividers="middle"
-                android:divider="?android:attr/dividerVertical"
-                android:dividerPadding="5dp"
-                android:layout_alignParentBottom="true">
-
-                <Button
-                    android:id="@+id/timeline_edit_negative_button"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:text="Delete" />
-
-                <Button
-                    android:id="@+id/timeline_edit_positive_button"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:fontFamily="sans-serif"
-                    android:text="Save" />
-            </LinearLayout>
-        </LinearLayout>
-    </FrameLayout>
 </android.support.v7.widget.CardView>

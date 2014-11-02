@@ -1,13 +1,16 @@
 package com.soundsofpolaris.timeline.tools;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 
 import com.soundsofpolaris.timeline.TimelineApplication;
 import com.soundsofpolaris.timeline.debug.Logger;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
@@ -43,5 +46,19 @@ public class FileHelper {
         }
 
         return null;
+    }
+
+    public static Bitmap resampleBitmap(Uri uri, Activity activity){
+        Bitmap image = null;
+        try {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inSampleSize = 4;
+            InputStream in = activity.getContentResolver().openInputStream(uri);
+            image = BitmapFactory.decodeStream(in, null, options);
+        } catch (FileNotFoundException e) {
+            TimelineApplication.handleException(e);
+        }
+
+        return image;
     }
 }

@@ -19,4 +19,5 @@
     
     <string name="default_error_message">Sorry, but something went wrong.</string>
     <string name="error_select_new_image">Couldn\'t load that image. Please select a different one. If you continue to have problems, please try a different app to select the image.</string>
+    <string name="error_select_title">Please select a title first.</string>
 </resources>

@@ -35,18 +35,12 @@ import com.soundsofpolaris.timeline.tools.FileHelper;
 import java.util.ArrayList;
 import java.util.zip.Inflater;
 
-public class TimelineListAdapter extends RecyclerView.Adapter<TimelineListAdapter.ViewHolder> {
+public class TimelineListAdapter extends RecyclerView.Adapter<TimelineListItemViewHolder> {
 
     private final Bitmap mImage;
     private int mColor;
 
     ArrayList<Timeline> mTimelines;
-
-    public static class ViewHolder extends TimelineListItemViewHolder{
-        public ViewHolder(View v){
-            super(v);
-        }
-    }
 
     public TimelineListAdapter(ArrayList<Timeline> timelines) {
         mTimelines = timelines;
@@ -57,15 +51,15 @@ public class TimelineListAdapter extends RecyclerView.Adapter<TimelineListAdapte
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+    public TimelineListItemViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.timeline_list_item, viewGroup, false);
-        final ViewHolder vh = new ViewHolder(view);
+        final TimelineListItemViewHolder vh = new TimelineListItemViewHolder(view);
         return vh;
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder viewHolder, int pos) {
+    public void onBindViewHolder(final TimelineListItemViewHolder viewHolder, int pos) {
 
         if (mImage != null) {
             viewHolder.mThumbnail.setImageBitmap(mImage);
@@ -74,7 +68,7 @@ public class TimelineListAdapter extends RecyclerView.Adapter<TimelineListAdapte
         viewHolder.mTitle.setText(mTimelines.get(pos).getName());
         viewHolder.mDesc.setText("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.");
 
-        viewHolder.mLayout.setOnClickListener(new View.OnClickListener() {
+        viewHolder.mCardLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
                 Intent i = new Intent(v.getContext(), EventActivity.class);

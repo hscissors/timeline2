@@ -5,6 +5,7 @@
     <color name="primary_dark">#2980b9</color>
 
     <color name="alternate_dark">#39454D</color>
+    <color name="alternate">#ff2d3941</color>
 
     <color name="text_primary_light">#ffffff</color>
     <color name="text_primary">#2a2a2a</color>

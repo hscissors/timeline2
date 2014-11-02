@@ -52,7 +52,7 @@ public class MessageDialog extends DialogFragment {
         return v;
     }
 
-    public void setOnPositiveListener(View.OnClickListener listener){
+    public void setListener(View.OnClickListener listener){
         mPositiveButton.setOnClickListener(listener);
     }
 }

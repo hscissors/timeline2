@@ -79,7 +79,7 @@ public class TimelineApplication extends Application {
         mInstance = this;
     }
 
-    public static void handleException(Error e){
+    public static void handleException(Exception e){
         FragmentManager fm = ((BaseActivity) getInstance().getBaseContext()).getSupportFragmentManager();
         if(Debug.ENABLED){
             MessageDialog messageDialog = MessageDialog.newInstance("Error", e.getMessage(), false);
