@@ -1,6 +1,5 @@
 package com.soundsofpolaris.timeline.event;
 
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -98,7 +97,7 @@ public class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public RecyclerView.ViewHolder onCreateHeaderViewHolder(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.event_list_section, parent, false);
+                .inflate(R.layout.event_list_header, parent, false);
         return new RecyclerView.ViewHolder(view) {};
     }
 

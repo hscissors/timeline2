@@ -6,4 +6,5 @@ package com.soundsofpolaris.timeline.debug;
 public class Debug {
     public final static boolean ENABLED = true;
     public final static boolean LOGGER = true;
+    public final static boolean DB_TRACE = true;
 }

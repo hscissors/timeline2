@@ -6,6 +6,10 @@ import android.util.Log;
  * Created by hscissors on 10/21/14.
  */
 public class Logger {
+    public static void i(String tag, String msg){
+        if(Debug.ENABLED && Debug.LOGGER) Log.i(tag, msg);
+    }
+
     public static void v(String tag, String msg){
         if(Debug.ENABLED && Debug.LOGGER) Log.v(tag, msg);
     }

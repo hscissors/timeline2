@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class EventListFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String SELECTED_TIMELINE_ID = "selected_timeline";
+    private static final String SELECTED_TIMELINE_ID = "selected_timeline_id";
 
     private int mTimelineID;
 
@@ -45,6 +45,7 @@ public class EventListFragment extends Fragment {
                              Bundle savedInstanceState) {
         FrameLayout rootView = (FrameLayout) inflater.inflate(R.layout.event_list_fragment, container, false);
 
+        //TODO get all events by selected timelines
         ArrayList<Event> events = new ArrayList();
         events.add(new Event(0, 1900, 1, 1000l, "Battle of Antietam", "Event Description", 0, 0, 0, 0xff27ae60, "test"));
         events.add(new Event(0, 1901, 1, 1000l, "Abraham Lincoln's Birthday", "Event Description", 0, 0, 0, 0xff27ae60, "test"));

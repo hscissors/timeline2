@@ -8,17 +8,19 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
 
 import com.soundsofpolaris.timeline.base.BaseActivity;
 
 import com.soundsofpolaris.timeline.R;
 
 
-public class EventActivity extends BaseActivity {
+public class EventActivity extends BaseActivity implements DrawerLayout.DrawerListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //TODO pass over selected timeline id
         overridePendingTransition(R.anim.in_right_to_left, R.anim.out_left_to_right);
         setContentView(R.layout.event_activity);
         if (savedInstanceState == null) {
@@ -31,28 +33,15 @@ public class EventActivity extends BaseActivity {
         setSupportActionBar(toolbar);
 
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerLayout.setDrawerListener(this);
         drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this,
-                drawerLayout,
-                R.string.action_open_drawer,
-                R.string.action_close_drawer) {
-
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-                //getActionBar().setTitle(mTitle);
-            }
-
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                //getActionBar().setTitle(mDrawerTitle);
-            }
-        };
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-        drawerLayout.setDrawerListener(toggle);
+
+        //TODO load timelines, excluding selected
+        ListView linkedTimelineList = (ListView) findViewById(R.id.linked_timeline_list);
+        linkedTimelineList.setAdapter(new LinkedTimelineListAdapter());
     }
 
 
@@ -79,5 +68,25 @@ public class EventActivity extends BaseActivity {
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.in_left_to_right, R.anim.out_right_to_left);
+    }
+
+    @Override
+    public void onDrawerSlide(View view, float v) {
+
+    }
+
+    @Override
+    public void onDrawerOpened(View view) {
+
+    }
+
+    @Override
+    public void onDrawerClosed(View view) {
+
+    }
+
+    @Override
+    public void onDrawerStateChanged(int i) {
+
     }
 }
