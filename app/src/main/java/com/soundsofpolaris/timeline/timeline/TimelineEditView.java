@@ -2,11 +2,8 @@ package com.soundsofpolaris.timeline.timeline;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.graphics.Palette;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,13 +11,14 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 
+import com.android.volley.toolbox.NetworkImageView;
 import com.soundsofpolaris.timeline.R;
 import com.soundsofpolaris.timeline.base.BaseActivity;
 import com.soundsofpolaris.timeline.dialogs.MessageDialog;
 import com.soundsofpolaris.timeline.dialogs.SelectImageSourceDialog;
+import com.soundsofpolaris.timeline.tools.Utils;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by hscissors on 10/31/14.
@@ -44,7 +42,7 @@ public class TimelineEditView extends FrameLayout {
         init(context);
     }
 
-    private void init(final Context context){
+    private void init(final Context context) {
         inflate(context, R.layout.timeline_edit_view, this);
 
         mImageContainer = (FrameLayout) findViewById(R.id.timeline_edit_new_image_container);
@@ -91,6 +89,35 @@ public class TimelineEditView extends FrameLayout {
                         mImageSingle.setVisibility(View.GONE);
 
                         mImageList.setAdapter(new TimelineEditViewImageListAdapter(imageUrls));
+                        mImageList.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                            @Override
+                            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                            }
+
+                            @Override
+                            public void onPageSelected(int position) {
+
+                            }
+
+                            @Override
+                            public void onPageScrollStateChanged(int state) {
+                                if (state == ViewPager.SCROLL_STATE_IDLE) {
+                                    NetworkImageView view = (NetworkImageView) mImageList.findViewWithTag(mImageList.getCurrentItem());
+
+                                    if (view != null) {
+
+                                        Palette.generateAsync(Utils.loadBitmapFromView(view), new Palette.PaletteAsyncListener() {
+                                            @Override
+                                            public void onGenerated(Palette palette) {
+                                                mEditColor.setBackgroundColor(palette.getMutedSwatch().getRgb());
+                                            }
+                                        });
+
+                                    }
+                                }
+                            }
+                        });
                     }
                 });
 

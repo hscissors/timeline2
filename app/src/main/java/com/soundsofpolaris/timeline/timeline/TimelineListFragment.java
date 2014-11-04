@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.soundsofpolaris.timeline.R;
-import com.soundsofpolaris.timeline.models.Timeline;
 
 import java.util.ArrayList;
 

@@ -1,39 +1,19 @@
 package com.soundsofpolaris.timeline.timeline;
 
-import android.animation.Animator;
-import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.graphics.Palette;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.PopupMenu;
-import android.widget.RelativeLayout;
-import android.widget.SeekBar;
-import android.widget.TextView;
 
 import com.soundsofpolaris.timeline.R;
 import com.soundsofpolaris.timeline.event.EventActivity;
-import com.soundsofpolaris.timeline.event.EventListFragment;
-import com.soundsofpolaris.timeline.models.Timeline;
 import com.soundsofpolaris.timeline.tools.FileHelper;
 
 import java.util.ArrayList;
-import java.util.zip.Inflater;
 
 public class TimelineListAdapter extends RecyclerView.Adapter<TimelineListItemViewHolder> {
 

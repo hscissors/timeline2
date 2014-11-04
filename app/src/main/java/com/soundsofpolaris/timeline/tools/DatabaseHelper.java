@@ -9,8 +9,8 @@ import android.util.Log;
 import android.util.Pair;
 
 import com.soundsofpolaris.timeline.Constants;
-import com.soundsofpolaris.timeline.models.Event;
-import com.soundsofpolaris.timeline.models.Timeline;
+import com.soundsofpolaris.timeline.event.Event;
+import com.soundsofpolaris.timeline.timeline.Timeline;
 
 import java.util.ArrayList;
 import java.util.Calendar;

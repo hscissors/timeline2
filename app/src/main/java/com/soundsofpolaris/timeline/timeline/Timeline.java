@@ -1,4 +1,4 @@
-package com.soundsofpolaris.timeline.models;
+package com.soundsofpolaris.timeline.timeline;
 
 public class Timeline {
 	private int id;

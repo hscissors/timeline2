@@ -1,4 +1,4 @@
-package com.soundsofpolaris.timeline.models;
+package com.soundsofpolaris.timeline.event;
 
 import java.text.SimpleDateFormat;
 

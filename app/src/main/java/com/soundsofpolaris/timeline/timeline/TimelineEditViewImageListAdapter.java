@@ -1,5 +1,6 @@
 package com.soundsofpolaris.timeline.timeline;
 
+import android.content.Context;
 import android.support.v4.view.PagerAdapter;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -32,6 +33,7 @@ public class TimelineEditViewImageListAdapter extends PagerAdapter {
         NetworkImageView image = (NetworkImageView) view.findViewById(R.id.image_list_item_image_view);
         image.setImageUrl(mImageUrls.get(position), TimelineApplication.getInstance().getImageLoader());
         image.setErrorImageResId(R.drawable.ic_action_picture_large);
+        image.setTag(position);
 
         container.addView(view);
         return view;

@@ -2,7 +2,6 @@ package com.soundsofpolaris.timeline.event;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,9 +11,6 @@ import android.widget.FrameLayout;
 
 import com.soundsofpolaris.timeline.R;
 import com.soundsofpolaris.timeline.gui.StickyRecyclerHeadersDecoration;
-import com.soundsofpolaris.timeline.models.Event;
-import com.soundsofpolaris.timeline.models.Timeline;
-import com.soundsofpolaris.timeline.timeline.TimelineListAdapter;
 
 import java.util.ArrayList;
 

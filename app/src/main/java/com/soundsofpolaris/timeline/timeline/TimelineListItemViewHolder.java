@@ -11,7 +11,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.soundsofpolaris.timeline.R;
-import com.soundsofpolaris.timeline.models.Timeline;
 
 public class TimelineListItemViewHolder extends RecyclerView.ViewHolder {
     public static final String TAG = TimelineListItemViewHolder.class.toString();

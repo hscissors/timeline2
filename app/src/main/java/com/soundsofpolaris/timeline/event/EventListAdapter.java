@@ -2,26 +2,19 @@ package com.soundsofpolaris.timeline.event;
 
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.soundsofpolaris.timeline.R;
 import com.soundsofpolaris.timeline.gui.StickyRecyclerHeadersAdapter;
-import com.soundsofpolaris.timeline.models.Event;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
 
 public class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements StickyRecyclerHeadersAdapter {
 
@@ -32,8 +25,7 @@ public class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public static class EventViewHolder extends RecyclerView.ViewHolder {
 
-        public boolean isSelected;
-
+        public CardView mLayout;
         public RelativeLayout mEventContainer;
         public TextView mMonth;
         public TextView mDay;
@@ -43,6 +35,8 @@ public class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         public EventViewHolder(View view) {
             super(view);
+            mLayout = (CardView) view.findViewById(R.id.card_layout);
+
             mTitle = (TextView) view.findViewById(R.id.event_title);
             mDesc = (TextView) view.findViewById(R.id.event_description);
 
@@ -56,27 +50,25 @@ public class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int typeView) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.event_list_item, viewGroup, false);;
+        final View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.event_list_item, viewGroup, false);;
         ImageButton listItemMenuButton = (ImageButton) view.findViewById(R.id.event_list_item_menu_button);
 
-        final RecyclerView.ViewHolder vh = new EventViewHolder(view);
+        final EventViewHolder vh = new EventViewHolder(view);
 
         listItemMenuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 PopupMenu menu = new PopupMenu(v.getContext(), v);
-                menu.inflate(R.menu.event_list_menu);
+                menu.inflate(R.menu.event_list_item_menu);
                 menu.show();
                 menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         int id = item.getItemId();
                         switch (id) {
-                            case R.id.action_share:
-                                return true;
                             case R.id.action_edit:
-//                                vh.mLayout.setVisibility(View.GONE);
-//                                vh.mEditLayout.setVisibility(View.VISIBLE);
+                                vh.mEventContainer.setVisibility(View.GONE);
+                                vh.mLayout.addView(new EventEditView(view.getContext()));
                                 return true;
                         }
                         return false;
@@ -96,21 +88,6 @@ public class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         ((EventViewHolder) viewHolder).mMonth.setText(event.getMonth());
         ((EventViewHolder) viewHolder).mTitle.setText(event.getTitle());
         ((EventViewHolder) viewHolder).mDesc.setText(event.getDescription());
-
-
-        ((EventViewHolder) viewHolder).mEventContainer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                RelativeLayout container = (RelativeLayout) v;
-                if(((EventViewHolder) viewHolder).isSelected){
-                    ((EventViewHolder) viewHolder).mDesc.setVisibility(View.GONE);
-                } else {
-                    ((EventViewHolder) viewHolder).mDesc.setVisibility(View.VISIBLE);
-                }
-
-                ((EventViewHolder) viewHolder).isSelected = !((EventViewHolder) viewHolder).isSelected;
-            }
-        });
     }
 
     @Override
