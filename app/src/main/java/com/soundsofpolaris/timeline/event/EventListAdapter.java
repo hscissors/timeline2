@@ -1,14 +1,11 @@
 package com.soundsofpolaris.timeline.event;
 
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -18,10 +15,6 @@ import com.soundsofpolaris.timeline.gui.StickyRecyclerHeadersAdapter;
 import com.soundsofpolaris.timeline.models.Event;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
 
 public class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements StickyRecyclerHeadersAdapter {
 
@@ -121,7 +114,7 @@ public class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public RecyclerView.ViewHolder onCreateHeaderViewHolder(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.event_list_section, parent, false);
+                .inflate(R.layout.event_list_header, parent, false);
         return new RecyclerView.ViewHolder(view) {};
     }
 

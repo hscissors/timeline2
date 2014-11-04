@@ -5,10 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 import android.util.Pair;
 
 import com.soundsofpolaris.timeline.Constants;
+import com.soundsofpolaris.timeline.debug.Debug;
+import com.soundsofpolaris.timeline.debug.Logger;
 import com.soundsofpolaris.timeline.models.Event;
 import com.soundsofpolaris.timeline.models.Timeline;
 
@@ -19,8 +20,10 @@ import java.util.HashSet;
 import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
+    
+    private final static String TAG = DatabaseHelper.class.toString();
 
-    public final static int DB_VERSION = 15;
+    public final static int DB_VERSION = 15; //TODO Update db verison
     public final static String DB_NAME = "timeline.db";
     public final static String EVENTS_TABLE = "eventstable";
     public final static String ID_COL = "id";
@@ -38,6 +41,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public final static String GROUP_TABLE = "groupstable";
     public final static String GROUP_NAME_COL = "gname";
     public final static String GROUP_COLOR_COL = "gcolor";
+    public final static String GROUP_IMAGE_COL = "gimage";
 
     public final static String GROUP_TO_GROUP_TABLE = "gtgtable";
     public final static String GTG_ID = "gtgid";
@@ -64,10 +68,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.v(Constants.LOG, "upgrade DB!");
+        Logger.v(TAG, "upgrade DB!");
         db.execSQL(RawQueries.DROP_EVENTS_TABLE());
         db.execSQL(RawQueries.DROP_GROUPS_TABLE());
         onCreate(db);
+
+        //TODO use updateDatabases on update
     }
 
     public void updateDatabase() {
@@ -89,7 +95,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
             db.close();
         } catch (Exception e) {
-            Log.i(Constants.LOG, "DATABASE ALREADY ALTERED! Old date scheme fixed");
+            Logger.i(TAG, "DATABASE ALREADY ALTERED! Old date scheme fixed");
         }
 
         try {
@@ -120,11 +126,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
             db.close();
         } catch (Exception e) {
-            Log.d(Constants.LOG, e.toString());
-            Log.i(Constants.LOG, "DATABASE ALREADY ALTERED! Added linked, allyear, allmonth");
+            Logger.i(TAG, "DATABASE ALREADY ALTERED! Added linked, allyear, allmonth");
+        }
+        
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            db.execSQL("ALTER TABLE " + GROUP_TABLE + " ADD COLUMN " + GROUP_IMAGE_COL + " TEXT");
+        } catch (Exception e){
+            Logger.v(TAG, e.getMessage());
+            Logger.v(TAG, "DATABASE ALREADY ALTERED! Added group images");
         }
 
-        traceAllTableColumns();
+        if(Debug.ENABLED && Debug.DB_TRACE) {
+            traceAllTableColumns();
+        }
     }
 
     public void traceAllTableColumns() {
@@ -138,7 +153,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 tabletrace.append(c.getColumnName(i) + ", ");
             }
 
-            Log.d(Constants.LOG, tabletrace.toString());
+            Logger.v(TAG, tabletrace.toString());
         }
 
         c = db.query(EVENTS_TABLE, null, null, null, null, null, null);
@@ -150,7 +165,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 tabletrace.append(c.getColumnName(i) + ", ");
             }
 
-            Log.d(Constants.LOG, tabletrace.toString());
+            Logger.v(TAG, tabletrace.toString());
         }
 
         c = db.query(GROUP_TO_GROUP_TABLE, null, null, null, null, null, null);
@@ -162,15 +177,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 tabletrace.append(c.getColumnName(i) + ", ");
             }
 
-            Log.d(Constants.LOG, tabletrace.toString());
+            Logger.v(TAG, tabletrace.toString());
         }
     }
 
-    public int addGroup(String name, int color) {
+    public int addGroup(String name, int color, String imagefile) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(GROUP_NAME_COL, name);
         cv.put(GROUP_COLOR_COL, color);
+        cv.put(GROUP_IMAGE_COL, imagefile);
         long gid = db.insert(GROUP_TABLE, GROUP_ID_COL, cv);
         db.close();
 
@@ -227,7 +243,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 int groupId = c.getInt(c.getColumnIndex(GROUP_ID_COL));
                 String groupName = c.getString(c.getColumnIndex(GROUP_NAME_COL));
                 int groupColor = c.getInt(c.getColumnIndex(GROUP_COLOR_COL));
-                g = new Timeline(groupId, groupName, groupColor);
+                String groupImage = c.getString(c.getColumnIndex(GROUP_IMAGE_COL));
+                g = new Timeline(groupId, groupName, groupColor, groupImage);
             } while (c.moveToNext());
         }
 
@@ -283,7 +300,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 int gid = c.getInt(c.getColumnIndex(GROUP_ID_COL));
                 String gname = c.getString(c.getColumnIndex(GROUP_NAME_COL));
                 int gcolor = c.getInt(c.getColumnIndex(GROUP_COLOR_COL));
-                groups.add(new Timeline(gid, gname, gcolor));
+                String gimage = c.getString(c.getColumnIndex(GROUP_IMAGE_COL));
+                groups.add(new Timeline(gid, gname, gcolor, gimage));
             } while (c.moveToNext());
         }
         db.close();
@@ -301,7 +319,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 int gid = c.getInt(c.getColumnIndex(GROUP_ID_COL));
                 String gname = c.getString(c.getColumnIndex(GROUP_NAME_COL));
                 int gcolor = c.getInt(c.getColumnIndex(GROUP_COLOR_COL));
-                groups.add(new Timeline(gid, gname, gcolor));
+                String gimage = c.getString(c.getColumnIndex(GROUP_IMAGE_COL));
+                groups.add(new Timeline(gid, gname, gcolor, gimage));
             } while (c.moveToNext());
         }
         db.close();
@@ -362,18 +381,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 le.add(new Event(id, year, month, date, title, desc, isAllYear, isAllMonth, groupId, groupColor, groupName));
             } while (c.moveToNext());
 
-            Log.d(Constants.LOG, "Raw array size@DatebaseHelper.getAllEvents(): " + le.size());
+            Logger.d(TAG, "Raw array size@DatebaseHelper.getAllEvents(): " + le.size());
 
             for (int i = 0; i < le.size(); i++) { //For every item in the DB...
                 String year = String.valueOf(le.get(i).getYear()); //Get the year for the item...
-                Log.d(Constants.LOG, "Parse item: " + le.get(i).getYear());
+                Logger.d(TAG, "Parse item: " + le.get(i).getYear());
                 Boolean found = false;
                 if (years.size() > 0) {
                     for (int j = 0; j < years.size(); j++) { //Now for every year in the sorted list...
                         if (years.get(j).first.equals(year) && years.get(j) != null) {
                             ArrayList<Event> events = (ArrayList<Event>) years.get(j).second;
                             events.add(le.get(i));
-                            Log.d(Constants.LOG, "Add item to exsisting year: " + years.get(j).second + " which has a events array " + events.size());
+                            Logger.d(TAG, "Add item to exsisting year: " + years.get(j).second + " which has a events array " + events.size());
                             found = true;
                         }
                     }
@@ -383,12 +402,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     ArrayList<Event> events = new ArrayList<Event>();
                     events.add(le.get(i));
                     years.add(new Pair<String, List<Event>>(year, events));
-                    Log.d(Constants.LOG, "Add item to new year: " + year + " which has a events array " + events.size());
+                    Logger.d(TAG, "Add item to new year: " + year + " which has a events array " + events.size());
                 }
             }
         }
 
-        Log.d(Constants.LOG, "years size@DatebaseHelper.getAllEvents(): " + years.size());
+        Logger.d(TAG, "years size@DatebaseHelper.getAllEvents(): " + years.size());
         return years;
     }
 
@@ -425,14 +444,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.close();
 
-        Log.d(Constants.LOG, "addLinkedGroup@DatebaseHelper.addLinkToGroup(): parent = " + parentGroupId + ", link = " + linkedGroupId);
+        Logger.d(TAG, "addLinkedGroup@DatebaseHelper.addLinkToGroup(): parent = " + parentGroupId + ", link = " + linkedGroupId);
     }
 
     public void deleteLinkToGroup(int parentGroupId, int linkedGroupId) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(GROUP_TO_GROUP_TABLE, GTG_PARENT_ID + "=? AND " + GTG_LINKED_ID + "=?", new String[]{Integer.toString(parentGroupId), Integer.toString(linkedGroupId)});
         db.close();
-        Log.d(Constants.LOG, "deleteLinkedGroup@DatebaseHelper.deleteLinkToGroup(): parent = " + parentGroupId + ", link = " + linkedGroupId);
+        Logger.d(TAG, "deleteLinkedGroup@DatebaseHelper.deleteLinkToGroup(): parent = " + parentGroupId + ", link = " + linkedGroupId);
     }
 
     public ArrayList<Integer> getRecursiveLinksToGroup(ArrayList<Integer> parentGroupId) {
