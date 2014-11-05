@@ -6,7 +6,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 
-import com.soundsofpolaris.timeline.models.Timeline;
+
+import com.soundsofpolaris.timeline.timeline.Timeline;
 
 import java.util.ArrayList;
 
@@ -17,8 +18,8 @@ public class LinkedTimelineListAdapter extends BaseAdapter implements ListAdapte
 
     private ArrayList<Timeline> mTimelines;
 
-    public LinkedTimelineListAdapter(ArrayList<Timeline> timelines){
-        mTimelines = timelines;
+    public LinkedTimelineListAdapter(int selectedTimeline){
+        //mTimelines = timelines;
     }
 
     @Override

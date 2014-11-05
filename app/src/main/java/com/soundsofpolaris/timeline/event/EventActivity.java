@@ -40,8 +40,8 @@ public class EventActivity extends BaseActivity implements DrawerLayout.DrawerLi
         getSupportActionBar().setHomeButtonEnabled(true);
 
         //TODO load timelines, excluding selected
-        ListView linkedTimelineList = (ListView) findViewById(R.id.linked_timeline_list);
-        linkedTimelineList.setAdapter(new LinkedTimelineListAdapter());
+        //ListView linkedTimelineList = (ListView) findViewById(R.id.linked_timeline_list);
+        //linkedTimelineList.setAdapter(new LinkedTimelineListAdapter(0));
     }
 
 

@@ -33,12 +33,12 @@ public class TimelineListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final ArrayList<Timeline> timelines = new ArrayList();
-        timelines.add(new Timeline(0, "Horsehead Nebula", 0xffe74c3c));
-        timelines.add(new Timeline(0, "Horsehead Nebula", 0xffe74c3c));
-        timelines.add(new Timeline(0, "Horsehead Nebula", 0xffe74c3c));
-        timelines.add(new Timeline(0, "Horsehead Nebula", 0xffe74c3c));
-        timelines.add(new Timeline(0, "Horsehead Nebula", 0xffe74c3c));
-        timelines.add(new Timeline(0, "Horsehead Nebula", 0xffe74c3c));
+        timelines.add(new Timeline(0, "Horsehead Nebula", 0xffe74c3c, ""));
+        timelines.add(new Timeline(0, "Horsehead Nebula", 0xffe74c3c, ""));
+        timelines.add(new Timeline(0, "Horsehead Nebula", 0xffe74c3c, ""));
+        timelines.add(new Timeline(0, "Horsehead Nebula", 0xffe74c3c, ""));
+        timelines.add(new Timeline(0, "Horsehead Nebula", 0xffe74c3c, ""));
+        timelines.add(new Timeline(0, "Horsehead Nebula", 0xffe74c3c, ""));
 
         FrameLayout rootView = (FrameLayout) inflater.inflate(R.layout.timeline_list_fragement, container, false);
 

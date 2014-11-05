@@ -11,12 +11,10 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 
-import com.android.volley.toolbox.NetworkImageView;
 import com.soundsofpolaris.timeline.R;
 import com.soundsofpolaris.timeline.base.BaseActivity;
 import com.soundsofpolaris.timeline.dialogs.MessageDialog;
 import com.soundsofpolaris.timeline.dialogs.SelectImageSourceDialog;
-import com.soundsofpolaris.timeline.tools.Utils;
 
 import java.util.ArrayList;
 
@@ -29,7 +27,7 @@ public class TimelineEditView extends FrameLayout {
     private FrameLayout mImageContainer;
     private ImageView mAddImageIcon;
     private ImageView mImageSingle;
-    private ViewPager mImageList;
+    private ViewPager mImagePager;
     private FrameLayout mEditColor;
     private SeekBar mColorSlider;
     private EditText mEditTitle;
@@ -48,7 +46,7 @@ public class TimelineEditView extends FrameLayout {
         mImageContainer = (FrameLayout) findViewById(R.id.timeline_edit_new_image_container);
         mAddImageIcon = (ImageView) findViewById(R.id.timeline_edit_new_image_icon);
         mImageSingle = (ImageView) findViewById(R.id.timeline_edit_new_image_single);
-        mImageList = (ViewPager) findViewById(R.id.timeline_edit_image_list);
+        mImagePager = (ViewPager) findViewById(R.id.timeline_edit_image_list);
         mEditColor = (FrameLayout) findViewById(R.id.timeline_edit_color);
         mColorSlider = (SeekBar) findViewById(R.id.timeline_edit_color_slider);
         mEditTitle = (EditText) findViewById(R.id.timeline_edit_title);
@@ -64,7 +62,7 @@ public class TimelineEditView extends FrameLayout {
                     @Override
                     public void onSelectedFromPhone(Bitmap image) {
                         mAddImageIcon.setVisibility(View.GONE);
-                        mImageList.setVisibility(View.GONE);
+                        mImagePager.setVisibility(View.GONE);
                         mImageSingle.setVisibility(View.VISIBLE);
                         mImageSingle.setImageBitmap(image);
 
@@ -85,11 +83,12 @@ public class TimelineEditView extends FrameLayout {
                             return;
                         }
                         mAddImageIcon.setVisibility(View.GONE);
-                        mImageList.setVisibility(View.VISIBLE);
+                        mImagePager.setVisibility(View.VISIBLE);
                         mImageSingle.setVisibility(View.GONE);
 
-                        mImageList.setAdapter(new TimelineEditViewImageListAdapter(imageUrls));
-                        mImageList.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                        final TimelineEditViewImagePageAdapter mImagePagerAdapter = new TimelineEditViewImagePageAdapter(imageUrls, mEditColor);
+                        mImagePager.setAdapter(mImagePagerAdapter);
+                        mImagePager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                             @Override
                             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -97,25 +96,21 @@ public class TimelineEditView extends FrameLayout {
 
                             @Override
                             public void onPageSelected(int position) {
-
+                                mImagePagerAdapter.setCurrentPagePosition(position);
+                                View currentView = mImagePager.findViewWithTag(position);
+                                if(currentView != null) {
+                                    Palette currentPalette = (Palette) currentView.findViewById(R.id.image_list_item_image_view).getTag();
+                                    if(currentPalette != null) {
+                                        mEditColor.setBackgroundColor(currentPalette.getDarkVibrantColor(R.color.alternate));
+                                    } else {
+                                        mEditColor.setBackgroundColor(getResources().getColor(R.color.alternate));
+                                    }
+                                }
                             }
 
                             @Override
                             public void onPageScrollStateChanged(int state) {
-                                if (state == ViewPager.SCROLL_STATE_IDLE) {
-                                    NetworkImageView view = (NetworkImageView) mImageList.findViewWithTag(mImageList.getCurrentItem());
 
-                                    if (view != null) {
-
-                                        Palette.generateAsync(Utils.loadBitmapFromView(view), new Palette.PaletteAsyncListener() {
-                                            @Override
-                                            public void onGenerated(Palette palette) {
-                                                mEditColor.setBackgroundColor(palette.getMutedSwatch().getRgb());
-                                            }
-                                        });
-
-                                    }
-                                }
                             }
                         });
                     }
