@@ -14,7 +14,7 @@ import com.android.volley.toolbox.ImageLoader.ImageListener;
 /**
  * Created by hscissors on 11/3/14.
  */
-public class CustomNetworkImageView extends ImageView {
+public class PaletteNetworkImageView extends ImageView {
     public interface Listener {
         public void onError();
 
@@ -25,15 +25,15 @@ public class CustomNetworkImageView extends ImageView {
 
     private Listener mListener;
 
-    public CustomNetworkImageView(Context context) {
+    public PaletteNetworkImageView(Context context) {
         super(context);
     }
 
-    public CustomNetworkImageView(Context context, AttributeSet attrs) {
+    public PaletteNetworkImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public CustomNetworkImageView(Context context, AttributeSet attrs, int defStyle) {
+    public PaletteNetworkImageView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
