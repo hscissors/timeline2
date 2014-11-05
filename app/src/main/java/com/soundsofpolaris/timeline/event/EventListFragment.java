@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
 import com.soundsofpolaris.timeline.R;
 import com.soundsofpolaris.timeline.gui.StickyRecyclerHeadersDecoration;
@@ -43,7 +44,7 @@ public class EventListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        FrameLayout rootView = (FrameLayout) inflater.inflate(R.layout.event_list_fragment, container, false);
+        RelativeLayout rootView = (RelativeLayout) inflater.inflate(R.layout.event_list_fragment, container, false);
 
         //TODO get all events by selected timelines
         ArrayList<Event> events = new ArrayList();

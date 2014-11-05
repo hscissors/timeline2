@@ -23,7 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-    
+
     private final static String TAG = DatabaseHelper.class.toString();
 
     public final static int DB_VERSION = 15; //TODO Update db verison
@@ -43,7 +43,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public final static String GROUP_TABLE = "groupstable";
     public final static String GROUP_NAME_COL = "gname";
+    public final static String GROUP_DESC_COL = "gdesc";
     public final static String GROUP_COLOR_COL = "gcolor";
+    public final static String GROUP_TOTAL_EVENTS_COL = "gtotalevents";
     public final static String GROUP_IMAGE_COL = "gimage";
 
     public final static String GROUP_TO_GROUP_TABLE = "gtgtable";
@@ -134,7 +136,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         
         try {
             SQLiteDatabase db = this.getWritableDatabase();
+            db.execSQL("ALTER TABLE " + GROUP_TABLE + " ADD COLUMN " + GROUP_DESC_COL + " TEXT");
             db.execSQL("ALTER TABLE " + GROUP_TABLE + " ADD COLUMN " + GROUP_IMAGE_COL + " TEXT");
+            db.execSQL("ALTER TABLE " + GROUP_TABLE + " ADD COLUMN " + GROUP_TOTAL_EVENTS_COL + " INTEGER");
         } catch (Exception e){
             Logger.v(TAG, e.getMessage());
             Logger.v(TAG, "DATABASE ALREADY ALTERED! Added group images");

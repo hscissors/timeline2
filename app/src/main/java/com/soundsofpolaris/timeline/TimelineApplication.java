@@ -32,7 +32,7 @@ public class TimelineApplication extends Application {
 
     private static TimelineApplication mInstance;
 
-    private DatabaseHelper db;
+    private DatabaseHelper mDatabaseHelper;
     private ImageLoader mImageLoader;
     private RequestQueue mRequestQueue;
 
@@ -54,9 +54,9 @@ public class TimelineApplication extends Application {
 //            // Ignore
 //        }
 
-        if (db == null) {
-            db = new DatabaseHelper(getApplicationContext());
-            db.updateDatabase(); //1.2.0 -- Used to add new column and "fix" date column
+        if (mDatabaseHelper == null) {
+            mDatabaseHelper = new DatabaseHelper(getApplicationContext());
+            mDatabaseHelper.updateDatabase(); //1.2.0 -- Used to add new column and "fix" date column
         }
 
         final String imageUrl = "http://apod.nasa.gov/apod/image/0811/horsehead_caelum.jpg";
@@ -76,6 +76,7 @@ public class TimelineApplication extends Application {
                     }
                 })
         );
+
         mInstance = this;
     }
 
@@ -90,8 +91,8 @@ public class TimelineApplication extends Application {
         }
     }
 
-    public DatabaseHelper getDatabase() {
-        return db;
+    public DatabaseHelper getDatabaseHelper() {
+        return mDatabaseHelper;
     }
 
     public RequestQueue getRequestQueue() {

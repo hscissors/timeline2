@@ -1,4 +1,5 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent"
     android:layout_width="match_parent">
 
@@ -10,4 +11,16 @@
         android:scrollbars="none"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-</FrameLayout>
+
+    <com.shamanland.fab.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_action_new"
+        app:floatingActionButtonColor="@color/primary_dark"
+        app:floatingActionButtonSize="normal"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="20dp"
+        />
+</RelativeLayout>

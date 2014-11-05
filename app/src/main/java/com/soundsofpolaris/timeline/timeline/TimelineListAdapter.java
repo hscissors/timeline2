@@ -14,20 +14,14 @@ import com.soundsofpolaris.timeline.event.EventActivity;
 import com.soundsofpolaris.timeline.tools.FileHelper;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TimelineListAdapter extends RecyclerView.Adapter<TimelineListItemViewHolder> {
 
-    private final Bitmap mImage;
-    private int mColor;
+    List<Timeline> mTimelines;
 
-    ArrayList<Timeline> mTimelines;
-
-    public TimelineListAdapter(ArrayList<Timeline> timelines) {
+    public TimelineListAdapter(List<Timeline> timelines) {
         mTimelines = timelines;
-        mImage = FileHelper.loadImage("horsehead_caelum.jpg");
-        if (mImage != null) {
-            mColor = Palette.generate(mImage).getMutedSwatch().getRgb();
-        }
     }
 
     @Override
@@ -40,13 +34,13 @@ public class TimelineListAdapter extends RecyclerView.Adapter<TimelineListItemVi
 
     @Override
     public void onBindViewHolder(final TimelineListItemViewHolder viewHolder, int pos) {
+        Timeline timeline = mTimelines.get(pos);
 
-        if (mImage != null) {
-            viewHolder.mThumbnail.setImageBitmap(mImage);
-            viewHolder.mColor.setBackgroundColor(mColor);
-        }
-        viewHolder.mTitle.setText(mTimelines.get(pos).getName());
-        viewHolder.mDesc.setText("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.");
+        viewHolder.mThumbnail.setImageBitmap(FileHelper.loadImage(timeline.getImageFile()));
+        viewHolder.mColor.setBackgroundColor(timeline.getColor());
+
+        viewHolder.mTitle.setText(timeline.getName());
+        viewHolder.mDesc.setText(timeline.getDescription());
 
         viewHolder.mCardLayout.setOnClickListener(new View.OnClickListener() {
             @Override

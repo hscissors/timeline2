@@ -19,6 +19,7 @@ import android.widget.Button;
 import com.soundsofpolaris.timeline.R;
 import com.soundsofpolaris.timeline.base.BaseActivity;
 import com.soundsofpolaris.timeline.debug.Logger;
+import com.soundsofpolaris.timeline.tasks.LoadImagesFromWebTask;
 import com.soundsofpolaris.timeline.tools.FileHelper;
 import com.soundsofpolaris.timeline.tools.Utils;
 
@@ -92,8 +93,16 @@ public class SelectImageSourceDialog extends DialogFragment {
         mListener = listener;
     }
 
+    private void selectFromPhone(){
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent,
+                "Select Picture"), SELECT_PICTURE);
+    }
+
     public void onActivityResult(int requestCode, int resultCode,
-                                    Intent imageReturned) {
+                                 Intent imageReturned) {
         super.onActivityResult(requestCode, resultCode, imageReturned);
 
         switch(requestCode) {
@@ -115,102 +124,31 @@ public class SelectImageSourceDialog extends DialogFragment {
         }
     }
 
-    private void selectFromPhone(){
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent,
-                "Select Picture"), SELECT_PICTURE);
-    }
-
     private void selectFromWeb(){
         if(Utils.isEmpty(mTimelineTitle)){
             mListener.onSelectedFromWeb(null);
             dismiss();
             return;
         } else {
-            //#rg_s .rg_i
+            ((BaseActivity) getActivity()).showLoader();
             ArrayList<String> imageUrls = new ArrayList();
-            FetchImageUrlsTask task = new FetchImageUrlsTask(this.getActivity());
-            task.execute(mTimelineTitle);
-
-            try {
-               //TODO Replace with call back
-                imageUrls = task.get();
-                ((BaseActivity) getActivity()).hideLoader();
-
-                if(mListener != null){
-                    mListener.onSelectedFromWeb(imageUrls);
+            LoadImagesFromWebTask task = new LoadImagesFromWebTask(new LoadImagesFromWebTask.Listener() {
+                @Override
+                public void onTaskComplete(ArrayList<String> imageUrls) {
+                    if(mListener != null){
+                        mListener.onSelectedFromWeb(imageUrls);
+                    }
                 }
-                dismiss();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
+            });
+
+            task.execute(mTimelineTitle);
+            dismiss();
         }
     }
 
     public static interface Listener{
         public void onSelectedFromPhone(Bitmap image);
         public void onSelectedFromWeb(ArrayList<String> imageUrls);
-    }
-
-
-    private static class FetchImageUrlsTask extends AsyncTask<String, Void, ArrayList<String>> {
-        private static final String SIZE = "m"; // M or L
-        private static final String IMAGE_A_SELECTOR = "a.rg_l";
-        private static final String USER_AGENT = "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.114 Safari/537.36";
-
-        private final Context mContext;
-
-        public FetchImageUrlsTask(Context context){
-            mContext = context;
-        }
-
-        @Override
-        protected ArrayList<String> doInBackground(String... params) {
-            ArrayList<String> imageUrls = new ArrayList();
-            if(params.length == 0) return imageUrls;
-            try {
-                String requestUrl = constructUrl(params[0]);
-                Document doc = Jsoup.connect(requestUrl)
-                        .userAgent(USER_AGENT)
-                        .get();
-                Elements imageLinks = doc.select(IMAGE_A_SELECTOR);
-                for (Element link : imageLinks){
-                    Uri externalLink = Uri.parse(link.attr("href"));
-                    imageUrls.add(externalLink.getQueryParameter("imgurl"));
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return imageUrls;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            ((BaseActivity) mContext).showLoader();
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<String> imageUrls) {
-            ((BaseActivity) mContext).hideLoader();
-            super.onPostExecute(imageUrls);
-        }
-
-        private String constructUrl(String term){
-            StringBuilder url = new StringBuilder();
-            url.append("https://www.google.com/search?tbm=isch&q=");
-            url.append(Uri.encode(term));
-            url.append("#q=");
-            url.append(Uri.encode(term));
-            url.append("&tbm=isch&tbs=isz:");
-            url.append(SIZE);
-            return url.toString();
-        }
     }
 }
 

@@ -20,35 +20,39 @@ import java.io.InputStream;
 public class FileHelper {
     private static final String TAG = FileHelper.class.getSimpleName();
 
-    public static void saveImage(String filename, Bitmap image){
+    public static String saveImage(String filename, Bitmap image) {
         try {
             File imageFile = new File(filename);
-            if(imageFile.exists()) return;
+            if (!imageFile.exists()) {
 
-            Context context = TimelineApplication.getInstance().getApplicationContext();
-            FileOutputStream out = new FileOutputStream(new File(context.getFilesDir(), filename));
-            image.compress(Bitmap.CompressFormat.PNG, 100, out);
-            out.flush();
-            out.close();
-        }
-        catch (Exception e) {
+                Context context = TimelineApplication.getInstance().getApplicationContext();
+                FileOutputStream out = new FileOutputStream(new File(context.getFilesDir(), filename));
+                image.compress(Bitmap.CompressFormat.PNG, 100, out);
+                out.flush();
+                out.close();
+            }
+            return imageFile.getName();
+        } catch (Exception e) {
             Logger.e(TAG, "Image could not be saved! " + filename);
         }
+
+        return new String();
     }
-    public static Bitmap loadImage(String filename){
+
+    public static Bitmap loadImage(String filename) {
         try {
             Context context = TimelineApplication.getInstance().getApplicationContext();
             InputStream in = context.openFileInput(filename);
             Bitmap image = BitmapFactory.decodeStream(in);
             return image;
-        } catch(Exception e){
+        } catch (Exception e) {
             Logger.e(TAG, "Image could not be loaded! " + filename);
         }
 
         return null;
     }
 
-    public static Bitmap resampleBitmap(Uri uri, Activity activity){
+    public static Bitmap resampleBitmap(Uri uri, Activity activity) {
         Bitmap image = null;
         try {
             BitmapFactory.Options options = new BitmapFactory.Options();
@@ -61,4 +65,6 @@ public class FileHelper {
 
         return image;
     }
+
+    //TODO Purge FileDir based on timeline tabel pivot imageFile list
 }
