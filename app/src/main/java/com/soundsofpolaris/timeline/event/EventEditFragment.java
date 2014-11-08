@@ -145,6 +145,8 @@ public class EventEditFragment extends Fragment {
                 boolean isAllYear = false;
                 if(isAllMonth && month == 0){
                     isAllYear = true;
+                } else {
+                    month--; //0-based month
                 }
 
                 int year;
