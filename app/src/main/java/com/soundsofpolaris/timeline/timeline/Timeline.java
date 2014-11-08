@@ -1,51 +1,76 @@
 package com.soundsofpolaris.timeline.timeline;
 
-public class Timeline {
-    private int id;
-    private String name;
-    private String desc = "";
-    private int color;
-    private String imageFile;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-    private boolean selected = false;
+public class Timeline implements Parcelable{
+    private long mGid;
+    private String mTitle;
+    private String mDesc;
+    private int mColor;
+    private String mImageFileName;
 
-    public Timeline(int id, String name, int color, String imageFile) {
-        this.id = id;
-        this.name = name;
-        this.color = color;
-        this.imageFile = imageFile;
+    private boolean mSelected = false;
+
+    public Timeline(long gid, String title, String desc, int color, String imageFileName) {
+        mGid = gid;
+        mTitle = title;
+        mDesc = desc;
+        mColor = color;
+        mImageFileName = imageFileName;
     }
 
-    public int getId() {
-        return this.id;
+    public long getId() {
+        return mGid;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return this.name;
+    public String getTitle() {
+        return mTitle;
     }
 
     public String getDescription() {
-        return this.desc;
+        return mDesc;
     }
 
     public int getColor() {
-        return this.color;
+        return mColor;
     }
 
-    public String getImageFile() {
-        return this.imageFile;
+    public String getImageFileName() {
+        return mImageFileName;
     }
 
     public boolean getSelected() {
-        return this.selected;
+        return mSelected;
     }
 
     public void setSelected(boolean selected) {
-        this.selected = selected;
+        mSelected = selected;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeLong(mGid);
+        out.writeString(mTitle);
+        out.writeString(mDesc);
+        out.writeInt(mColor);
+        out.writeString(mImageFileName);
+    }
+
+    public static final Parcelable.Creator<Timeline> CREATOR = new Parcelable.Creator<Timeline>() {
+        public Timeline createFromParcel(Parcel in) {
+            return new Timeline(in.readLong(), in.readString(), in.readString(), in.readInt(), in.readString());
+        }
+
+        public Timeline[] newArray(int size) {
+            return new Timeline[size];
+        }
+    };
+
 
 }

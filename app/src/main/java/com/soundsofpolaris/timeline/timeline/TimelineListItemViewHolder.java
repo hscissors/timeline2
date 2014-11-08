@@ -4,6 +4,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
@@ -11,6 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.soundsofpolaris.timeline.R;
+import com.soundsofpolaris.timeline.base.BaseActivity;
 
 public class TimelineListItemViewHolder extends RecyclerView.ViewHolder {
     public static final String TAG = TimelineListItemViewHolder.class.toString();
@@ -20,7 +22,7 @@ public class TimelineListItemViewHolder extends RecyclerView.ViewHolder {
     public final CardView mCardLayout;
     public final RelativeLayout mItemLayout;
     public final ImageView mThumbnail;
-    public final View mColor;
+    public final FrameLayout mColor;
     public final TextView mTitle;
     public final TextView mDesc;
 
@@ -29,7 +31,7 @@ public class TimelineListItemViewHolder extends RecyclerView.ViewHolder {
         mCardLayout = (CardView) v.findViewById(R.id.card_layout);
         mItemLayout = (RelativeLayout) v.findViewById(R.id.item_layout);
         mThumbnail = (ImageView) v.findViewById(R.id.timeline_thumbnail);
-        mColor = v.findViewById(R.id.timeline_color);
+        mColor = (FrameLayout) v.findViewById(R.id.timeline_color);
         mTitle = (TextView) v.findViewById(R.id.timeline_title);
         mDesc = (TextView) v.findViewById(R.id.timeline_desc);
 
@@ -48,8 +50,12 @@ public class TimelineListItemViewHolder extends RecyclerView.ViewHolder {
                             case R.id.action_share:
                                 return true;
                             case R.id.action_edit:
-                                mItemLayout.setVisibility(View.GONE);
-                                mCardLayout.addView(new TimelineEditView(v.getContext()));
+                                ((BaseActivity) v.getContext()).getSupportFragmentManager()
+                                        .beginTransaction()
+                                        .replace(R.id.container, TimelineEditFragment.newInstance(), "tag")
+                                        .addToBackStack("tag")
+                                        .commit();
+                                return true;
                         }
                         return false;
                     }

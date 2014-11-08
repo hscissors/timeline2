@@ -1,45 +1,59 @@
 package com.soundsofpolaris.timeline.tasks;
 
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 
 import com.soundsofpolaris.timeline.TimelineApplication;
 import com.soundsofpolaris.timeline.timeline.Timeline;
+import com.soundsofpolaris.timeline.tools.FileHelper;
+import com.soundsofpolaris.timeline.tools.Utils;
 
 import java.util.List;
 
 /**
  * Created by hscissors on 11/4/14.
  */
-public class SaveTimelineTask extends AsyncTask<Timeline, Void, Integer> {
+public class SaveTimelineTask extends AsyncTask<Void, Void, Timeline> {
 
-    Listener mListener;
+    private Listener mListener;
 
-    public SaveTimelineTask(Listener listener) {
-        mListener = listener;
+    private String mTitle;
+    private String mDesc;
+    private int mColor;
+    private String mImageFileName;
+    private Bitmap mImage;
+
+    public SaveTimelineTask(String title, String desc, int color, String imageFileName, Bitmap image) {
+        mTitle = title;
+        mDesc = desc;
+        mColor = color;
+        mImageFileName = imageFileName;
+        mImage = image;
     }
 
 
     public static interface Listener {
-        public void onTaskComplete(int gid);
+        public void onTaskComplete(Timeline timeline);
     }
 
     @Override
-    protected Integer doInBackground(Timeline... params) {
-        if(params[0] == null){
-            return -1;
+    protected Timeline doInBackground(Void... params) {
+        if(!Utils.isEmpty(mImageFileName) && mImage != null){
+            FileHelper.saveImage(mImageFileName, mImage);
         }
 
-        return TimelineApplication.getInstance().getDatabaseHelper().addGroup(
-                params[0].getName(),
-                params[0].getColor(),
-                params[0].getImageFile());
+        return TimelineApplication.getInstance().getDatabaseHelper().addGroup(mTitle, mDesc, mColor, mImageFileName);
     }
 
     @Override
-    protected void onPostExecute(Integer gid) {
+    protected void onPostExecute(Timeline timeline) {
+        mImage = null;
         if (mListener != null) {
-            mListener.onTaskComplete(gid);
-
+            mListener.onTaskComplete(timeline);
         }
+    }
+
+    public void setListener(Listener listener){
+        mListener = listener;
     }
 }

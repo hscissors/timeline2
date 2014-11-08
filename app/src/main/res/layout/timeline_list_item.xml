@@ -15,21 +15,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/timeline_thumbnail"
-                android:layout_width="match_parent"
-                android:minHeight="100dp"
-                android:maxHeight="300dp"
-                android:layout_height="wrap_content"
-                android:scaleType="centerCrop" />
-
-            <View
-                android:layout_below="@id/timeline_thumbnail"
+            <FrameLayout
                 android:id="@+id/timeline_color"
                 android:layout_width="match_parent"
-                android:minHeight="10dp"
+                android:minHeight="30dp"
                 android:background="#ff0000"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:clipToPadding="true">
+                <ImageView
+                    android:id="@+id/timeline_thumbnail"
+                    android:layout_width="match_parent"
+                    android:maxHeight="250dp"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop" />
+                </FrameLayout>
 
             <RelativeLayout
                 android:layout_below="@id/timeline_color"

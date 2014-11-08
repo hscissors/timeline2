@@ -1,27 +1,20 @@
 package com.soundsofpolaris.timeline.timeline;
 
-import android.app.Activity;
 import android.app.Fragment;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
 import com.shamanland.fab.FloatingActionButton;
 import com.shamanland.fab.ShowHideOnScroll;
 import com.soundsofpolaris.timeline.R;
-import com.soundsofpolaris.timeline.TimelineApplication;
 import com.soundsofpolaris.timeline.base.BaseActivity;
 import com.soundsofpolaris.timeline.tasks.LoadTimelinesTask;
-import com.soundsofpolaris.timeline.tools.DatabaseHelper;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class TimelineListFragment extends Fragment {
@@ -42,13 +35,18 @@ public class TimelineListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        final RelativeLayout rootView = (RelativeLayout) inflater.inflate(R.layout.timeline_list_fragement, container, false);
+        final RelativeLayout rootView = (RelativeLayout) inflater.inflate(R.layout.timeline_list_fragment, container, false);
 
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                rootView.addView(new TimelineEditView(getActivity()));
+                ((BaseActivity) v.getContext()).getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.container, TimelineEditFragment.newInstance(), TimelineEditFragment.class.toString())
+                        .addToBackStack(TimelineEditFragment.class.toString())
+                        .commit();
             }
         });
 

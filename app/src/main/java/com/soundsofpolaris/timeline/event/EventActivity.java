@@ -13,6 +13,8 @@ import android.widget.ListView;
 import com.soundsofpolaris.timeline.base.BaseActivity;
 
 import com.soundsofpolaris.timeline.R;
+import com.soundsofpolaris.timeline.timeline.Timeline;
+import com.soundsofpolaris.timeline.timeline.TimelineActivity;
 
 
 public class EventActivity extends BaseActivity implements DrawerLayout.DrawerListener{
@@ -20,12 +22,14 @@ public class EventActivity extends BaseActivity implements DrawerLayout.DrawerLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //TODO pass over selected timeline id
         overridePendingTransition(R.anim.in_right_to_left, R.anim.out_left_to_right);
         setContentView(R.layout.event_activity);
+
+        Timeline selectedTimeline = (Timeline) getIntent().getExtras().getParcelable(TimelineActivity.SELECTED_TIMELINE);
+
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, EventListFragment.newInstance(0))
+                    .add(R.id.container, EventListFragment.newInstance(selectedTimeline))
                     .commit();
         }
 
@@ -47,20 +51,16 @@ public class EventActivity extends BaseActivity implements DrawerLayout.DrawerLi
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.event_list_menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-//        if (id == R.id.search) {
-//            return true;
-//        }
+        if (id == android.R.id.home) {
+            onBackPressed();
+        }
         return super.onOptionsItemSelected(item);
     }
 

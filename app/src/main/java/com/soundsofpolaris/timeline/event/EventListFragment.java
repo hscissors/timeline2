@@ -10,22 +10,28 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
+import com.shamanland.fab.FloatingActionButton;
+import com.shamanland.fab.ShowHideOnScroll;
 import com.soundsofpolaris.timeline.R;
+import com.soundsofpolaris.timeline.TimelineApplication;
+import com.soundsofpolaris.timeline.base.BaseActivity;
 import com.soundsofpolaris.timeline.gui.StickyRecyclerHeadersDecoration;
+import com.soundsofpolaris.timeline.timeline.Timeline;
+import com.soundsofpolaris.timeline.timeline.TimelineEditFragment;
+import com.soundsofpolaris.timeline.tools.DatabaseHelper;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class EventListFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String SELECTED_TIMELINE_ID = "selected_timeline_id";
+    private static final String SELECTED_TIMELINE = "selected_timeline";
 
-    private int mTimelineID;
+    private Timeline mSelectedTimeline;
 
-    public static EventListFragment newInstance(int timelineID) {
+    public static EventListFragment newInstance(Timeline selectedTimeline) {
         EventListFragment fragment = new EventListFragment();
         Bundle args = new Bundle();
-        args.putInt(SELECTED_TIMELINE_ID, timelineID);
+        args.putParcelable(SELECTED_TIMELINE, selectedTimeline);
 
         fragment.setArguments(args);
         return fragment;
@@ -37,7 +43,7 @@ public class EventListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mTimelineID = getArguments().getInt(SELECTED_TIMELINE_ID);
+            mSelectedTimeline = (Timeline) getArguments().getParcelable(SELECTED_TIMELINE);
         }
     }
 
@@ -46,43 +52,27 @@ public class EventListFragment extends Fragment {
                              Bundle savedInstanceState) {
         RelativeLayout rootView = (RelativeLayout) inflater.inflate(R.layout.event_list_fragment, container, false);
 
-        //TODO get all events by selected timelines
-        ArrayList<Event> events = new ArrayList();
-        events.add(new Event(0, 1900, 1, 1000l, "Battle of Antietam", "Event Description", 0, 0, 0, 0xff27ae60, "test"));
-        events.add(new Event(0, 1901, 1, 1000l, "Abraham Lincoln's Birthday", "Event Description", 0, 0, 0, 0xff27ae60, "test"));
-        events.add(new Event(0, 1902, 1, 1000l, "Event", "Event Description", 0, 0, 0, 0xff27ae60, "test"));
-        events.add(new Event(0, 1903, 1, 1000l, "Event", "Event Description", 0, 0, 0, 0xff27ae60, "test"));
-        events.add(new Event(0, 1903, 1, 1000l, "Event", "Event Description", 0, 0, 0, 0xff27ae60, "test"));
-        events.add(new Event(0, 1903, 1, 1000l, "Event", "Event Description", 0, 0, 0, 0xff27ae60, "test"));
-        events.add(new Event(0, 1903, 1, 1000l, "Event", "Event Description", 0, 0, 0, 0xff27ae60, "test"));
-        events.add(new Event(0, 1900, 1, 1000l, "Event", "Event Description", 0, 0, 0, 0xff27ae60, "test"));
-        events.add(new Event(0, 1900, 1, 1000l, "Event", "Event Description", 0, 0, 0, 0xff27ae60, "test"));
-        events.add(new Event(0, 1900, 1, 1000l, "Event", "Event Description", 0, 0, 0, 0xff27ae60, "test"));
-        events.add(new Event(0, 1900, 1, 1000l, "Event", "Event Description", 0, 0, 0, 0xff27ae60, "test"));
-        events.add(new Event(0, 1900, 1, 1000l, "Event", "Event Description", 0, 0, 0, 0xff27ae60, "test"));
-        events.add(new Event(0, 1900, 1, 1000l, "Event", "Event Description", 0, 0, 0, 0xff27ae60, "test"));
-        events.add(new Event(0, 1900, 1, 1000l, "Event", "Event Description", 0, 0, 0, 0xff27ae60, "test"));
-        events.add(new Event(0, 1900, 1, 1000l, "Event", "Event Description", 0, 0, 0, 0xff27ae60, "test"));
-        events.add(new Event(0, 1900, 1, 1000l, "Event", "Event Description", 0, 0, 0, 0xff27ae60, "test"));
-        events.add(new Event(0, 1900, 1, 1000l, "Event", "Event Description", 0, 0, 0, 0xff27ae60, "test"));
-        events.add(new Event(0, 1900, 1, 1000l, "Event", "Event Description", 0, 0, 0, 0xff27ae60, "test"));
-        events.add(new Event(0, 1900, 1, 1000l, "Event", "Event Description", 0, 0, 0, 0xff27ae60, "test"));
-        events.add(new Event(0, 1900, 1, 1000l, "Event", "Event Description", 0, 0, 0, 0xff27ae60, "test"));
-        events.add(new Event(0, 1900, 1, 1000l, "Event", "Event Description", 0, 0, 0, 0xff27ae60, "test"));
-        events.add(new Event(0, 1910, 1, 1000l, "Event", "Event Description", 0, 0, 0, 0xff27ae60, "test"));
-        events.add(new Event(0, 1910, 1, 1000l, "Event", "Event Description", 0, 0, 0, 0xff27ae60, "test"));
-        events.add(new Event(0, 1910, 1, 1000l, "Event", "Event Description", 0, 0, 0, 0xff27ae60, "test"));
-        events.add(new Event(0, 1910, 1, 1000l, "Event", "Event Description", 0, 0, 0, 0xff27ae60, "test"));
-        events.add(new Event(0, 1910, 1, 1000l, "Event", "Event Description", 0, 0, 0, 0xff27ae60, "test"));
-        events.add(new Event(0, 1910, 1, 1000l, "Event", "Event Description", 0, 0, 0, 0xff27ae60, "test"));
-        events.add(new Event(0, 1910, 1, 1000l, "Event", "Event Description", 0, 0, 0, 0xff27ae60, "test"));
-        events.add(new Event(0, 1910, 1, 1000l, "Event", "Event Description", 0, 0, 0, 0xff27ae60, "test"));
+        //TODO task?
+        List<Event> events = TimelineApplication.getInstance().getDatabaseHelper().getAllEventsByTimeline(mSelectedTimeline.getId());
 
+        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((BaseActivity) v.getContext()).getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.container, EventEditFragment.newInstance(mSelectedTimeline), EventEditFragment.class.toString())
+                        .addToBackStack(EventEditFragment.class.toString())
+                        .commit();
+            }
+        });
 
         RecyclerView mEventList = (RecyclerView) rootView.findViewById(R.id.event_list);
 //        mEventList.setHasFixedSize(true);
         EventListAdapter eventListAdapter = new EventListAdapter(events);
         mEventList.setAdapter(eventListAdapter);
+        mEventList.setOnTouchListener(new ShowHideOnScroll(fab));
         mEventList.addItemDecoration(new StickyRecyclerHeadersDecoration(eventListAdapter));
         mEventList.setLayoutManager(new LinearLayoutManager(getActivity()));
 

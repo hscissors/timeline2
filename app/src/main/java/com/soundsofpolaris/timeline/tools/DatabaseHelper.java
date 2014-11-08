@@ -5,16 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Pair;
-
-import com.soundsofpolaris.timeline.Constants;
-
-import com.soundsofpolaris.timeline.event.Event;
-import com.soundsofpolaris.timeline.timeline.Timeline;
 
 import com.soundsofpolaris.timeline.debug.Debug;
 import com.soundsofpolaris.timeline.debug.Logger;
-
+import com.soundsofpolaris.timeline.event.Event;
+import com.soundsofpolaris.timeline.timeline.Timeline;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -28,6 +23,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public final static int DB_VERSION = 15; //TODO Update db verison
     public final static String DB_NAME = "timeline.db";
+
     public final static String EVENTS_TABLE = "eventstable";
     public final static String ID_COL = "id";
     public final static String YEAR_COL = "year";
@@ -39,19 +35,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public final static String ALLYEAR_COL = "allyear";
     public final static String ALLMONTH_COL = "allmonth";
 
-    public final static String GROUP_ID_COL = "gid";
+    public final static String TIMELINE_ID_COL = "gid";
 
-    public final static String GROUP_TABLE = "groupstable";
-    public final static String GROUP_NAME_COL = "gname";
-    public final static String GROUP_DESC_COL = "gdesc";
-    public final static String GROUP_COLOR_COL = "gcolor";
-    public final static String GROUP_TOTAL_EVENTS_COL = "gtotalevents";
-    public final static String GROUP_IMAGE_COL = "gimage";
+    public final static String TIMELINE_TABLE = "groupstable";
+    public final static String TIMELINE_NAME_COL = "gname";
+    public final static String TIMELINE_DESC_COL = "gdesc";
+    public final static String TIMELINE_COLOR_COL = "gcolor";
+    public final static String TIMELINE_TOTAL_EVENTS_COL = "gtotalevents";
+    public final static String TIMELINE_IMAGE_COL = "gimage";
 
-    public final static String GROUP_TO_GROUP_TABLE = "gtgtable";
-    public final static String GTG_ID = "gtgid";
-    public final static String GTG_PARENT_ID = "gtgparentid";
-    public final static String GTG_LINKED_ID = "gtglinkedid";
+    public final static String TIMELINE_TO_TIMELINE_TABLE = "TTtable";
+    public final static String TT_ID = "TTid";
+    public final static String TT_PARENT_ID = "TTparentid";
+    public final static String TT_LINKED_ID = "TTlinkedid";
 
     public final static int EXPORT_ALREADY_FILE_EXISTS = 1;
     public final static int EXPORT_WRITE_ERROR = 2;
@@ -68,14 +64,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(RawQueries.CREATE_EVENTS_TABLE());
-        db.execSQL(RawQueries.CREATE_GROUP_TABLE());
+        db.execSQL(RawQueries.CREATE_TIMELINE_TABLE());
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Logger.v(TAG, "upgrade DB!");
         db.execSQL(RawQueries.DROP_EVENTS_TABLE());
-        db.execSQL(RawQueries.DROP_GROUPS_TABLE());
+        db.execSQL(RawQueries.DROP_TIMELINES_TABLE());
         onCreate(db);
 
         //TODO use updateDatabases on update
@@ -105,7 +101,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         try {
             SQLiteDatabase db = this.getWritableDatabase();
-            db.execSQL(RawQueries.CREATE_GROUP_TO_GROUP_TABLE());
+            db.execSQL(RawQueries.CREATE_TIMELINE_TO_TIMELINE_TABLE());
 
             db.execSQL("ALTER TABLE " + EVENTS_TABLE + " ADD COLUMN " + ALLYEAR_COL + " INTEGER");
             db.execSQL("ALTER TABLE " + EVENTS_TABLE + " ADD COLUMN " + ALLMONTH_COL + " INTEGER");
@@ -133,28 +129,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         } catch (Exception e) {
             Logger.i(TAG, "DATABASE ALREADY ALTERED! Added linked, allyear, allmonth");
         }
-        
+
         try {
             SQLiteDatabase db = this.getWritableDatabase();
-            db.execSQL("ALTER TABLE " + GROUP_TABLE + " ADD COLUMN " + GROUP_DESC_COL + " TEXT");
-            db.execSQL("ALTER TABLE " + GROUP_TABLE + " ADD COLUMN " + GROUP_IMAGE_COL + " TEXT");
-            db.execSQL("ALTER TABLE " + GROUP_TABLE + " ADD COLUMN " + GROUP_TOTAL_EVENTS_COL + " INTEGER");
-        } catch (Exception e){
+            db.execSQL("ALTER TABLE " + TIMELINE_TABLE + " ADD COLUMN " + TIMELINE_DESC_COL + " TEXT");
+            db.execSQL("ALTER TABLE " + TIMELINE_TABLE + " ADD COLUMN " + TIMELINE_IMAGE_COL + " TEXT");
+            db.execSQL("ALTER TABLE " + TIMELINE_TABLE + " ADD COLUMN " + TIMELINE_TOTAL_EVENTS_COL + " INTEGER");
+        } catch (Exception e) {
             Logger.v(TAG, e.getMessage());
             Logger.v(TAG, "DATABASE ALREADY ALTERED! Added group images");
         }
 
-        if(Debug.ENABLED && Debug.DB_TRACE) {
+        if (Debug.ENABLED && Debug.DB_TRACE) {
             traceAllTableColumns();
         }
     }
 
     public void traceAllTableColumns() {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.query(GROUP_TABLE, null, null, null, null, null, null);
+        Cursor c = db.query(TIMELINE_TABLE, null, null, null, null, null, null);
         if (c != null) {
             StringBuilder tabletrace = new StringBuilder();
-            tabletrace.append("TABLE: " + GROUP_TABLE + " -- ");
+            tabletrace.append("TABLE: " + TIMELINE_TABLE + " -- ");
             int num = c.getColumnCount();
             for (int i = 0; i < num; ++i) {
                 tabletrace.append(c.getColumnName(i) + ", ");
@@ -175,10 +171,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Logger.v(TAG, tabletrace.toString());
         }
 
-        c = db.query(GROUP_TO_GROUP_TABLE, null, null, null, null, null, null);
+        c = db.query(TIMELINE_TO_TIMELINE_TABLE, null, null, null, null, null, null);
         if (c != null) {
             StringBuilder tabletrace = new StringBuilder();
-            tabletrace.append("TABLE: " + GROUP_TO_GROUP_TABLE + " -- ");
+            tabletrace.append("TABLE: " + TIMELINE_TO_TIMELINE_TABLE + " -- ");
             int num = c.getColumnCount();
             for (int i = 0; i < num; ++i) {
                 tabletrace.append(c.getColumnName(i) + ", ");
@@ -188,19 +184,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public int addGroup(String name, int color, String imagefile) {
+    public Timeline addGroup(String title, String desc, int color, String imagefile) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put(GROUP_NAME_COL, name);
-        cv.put(GROUP_COLOR_COL, color);
-        cv.put(GROUP_IMAGE_COL, imagefile);
-        long gid = db.insert(GROUP_TABLE, GROUP_ID_COL, cv);
+        cv.put(TIMELINE_NAME_COL, title);
+        cv.put(TIMELINE_DESC_COL, desc);
+        cv.put(TIMELINE_COLOR_COL, color);
+        cv.put(TIMELINE_IMAGE_COL, imagefile);
+        long gid = db.insert(TIMELINE_TABLE, TIMELINE_ID_COL, cv);
         db.close();
 
-        return (int) gid;
+        return new Timeline(gid, title, desc, color, imagefile);
     }
 
-    public void addEvent(int year, int month, long date, String title, String desc, Boolean isAllYear, Boolean isAllMonth, int groupId) {
+    public Event addEvent(int year, int month, long date, String title, String desc, Boolean isAllYear, Boolean isAllMonth, Timeline parentTimeline) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(YEAR_COL, year);
@@ -210,57 +207,59 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(DESC_COL, desc);
         cv.put(ALLYEAR_COL, (isAllYear ? 1 : 0));
         cv.put(ALLMONTH_COL, (isAllMonth ? 1 : 0));
-        cv.put(GROUP_ID_COL, groupId);
-        db.insert(EVENTS_TABLE, ID_COL, cv);
-        db.close();
-    }
-
-    public Event getEventById(int eid) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery(RawQueries.GET_EVENT_BY_ID(eid), null);
-        Event e = null;
-        if (c.moveToNext()) {
-            do {
-                int id = c.getInt(c.getColumnIndex(ID_COL));
-                int year = c.getInt(c.getColumnIndex(YEAR_COL));
-                int month = c.getInt(c.getColumnIndex(MONTH_COL));
-                long date = c.getLong(c.getColumnIndex(DATE_COL));
-                String title = c.getString(c.getColumnIndex(TITLE_COL));
-                String desc = c.getString(c.getColumnIndex(DESC_COL));
-                String groupName = c.getString(c.getColumnIndex(GROUP_NAME_COL));
-                int isAllYear = c.getInt(c.getColumnIndex(ALLYEAR_COL));
-                int isAllMonth = c.getInt(c.getColumnIndex(ALLMONTH_COL));
-                int groupId = c.getInt(c.getColumnIndex(GROUP_ID_COL));
-                int groupColor = c.getInt(c.getColumnIndex(GROUP_COLOR_COL));
-                e = new Event(id, year, month, date, title, desc, isAllYear, isAllMonth, groupId, groupColor, groupName);
-            } while (c.moveToNext());
-        }
-
+        cv.put(TIMELINE_ID_COL, parentTimeline.getId());
+        long id = db.insert(EVENTS_TABLE, ID_COL, cv);
         db.close();
 
-        return e;
+        return new Event(id, year, month, date, title, desc, isAllYear, isAllMonth, parentTimeline);
     }
 
-    public Timeline getGroupById(int gid) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery(RawQueries.GET_GROUP_BY_ID(gid), null);
-        Timeline g = null;
-        if (c.moveToNext()) {
-            do {
-                int groupId = c.getInt(c.getColumnIndex(GROUP_ID_COL));
-                String groupName = c.getString(c.getColumnIndex(GROUP_NAME_COL));
-                int groupColor = c.getInt(c.getColumnIndex(GROUP_COLOR_COL));
-                String groupImage = c.getString(c.getColumnIndex(GROUP_IMAGE_COL));
-                g = new Timeline(groupId, groupName, groupColor, groupImage);
-            } while (c.moveToNext());
-        }
+//    public Event getEventById(int eid) {
+//        SQLiteDatabase db = this.getReadableDatabase();
+//        Cursor c = db.rawQuery(RawQueries.GET_EVENT_BY_ID(eid), null);
+//        Event e = null;
+//        if (c.moveToNext()) {
+//            do {
+//                int id = c.getInt(c.getColumnIndex(ID_COL));
+//                int year = c.getInt(c.getColumnIndex(YEAR_COL));
+//                int month = c.getInt(c.getColumnIndex(MONTH_COL));
+//                long date = c.getLong(c.getColumnIndex(DATE_COL));
+//                String title = c.getString(c.getColumnIndex(TITLE_COL));
+//                String desc = c.getString(c.getColumnIndex(DESC_COL));
+//                String groupName = c.getString(c.getColumnIndex(TIMELINE_NAME_COL));
+//                int isAllYear = c.getInt(c.getColumnIndex(ALLYEAR_COL));
+//                int isAllMonth = c.getInt(c.getColumnIndex(ALLMONTH_COL));
+//                int groupId = c.getInt(c.getColumnIndex(TIMELINE_ID_COL));
+//                int groupColor = c.getInt(c.getColumnIndex(TIMELINE_COLOR_COL));
+//                e = new Event(id, year, month, date, title, desc, isAllYear, isAllMonth, groupId);
+//            } while (c.moveToNext());
+//        }
+//
+//        db.close();
+//
+//        return e;
+//    }
 
-        db.close();
+//    public Timeline getGroupById(int gid) {
+//        SQLiteDatabase db = this.getReadableDatabase();
+//        Cursor c = db.rawQuery(RawQueries.GET_TIMELINE_BY_ID(gid), null);
+//        Timeline g = null;
+//        if (c.moveToNext()) {
+//            do {
+//                int groupId = c.getInt(c.getColumnIndex(TIMELINE_ID_COL));
+//                String groupName = c.getString(c.getColumnIndex(TIMELINE_NAME_COL));
+//                int groupColor = c.getInt(c.getColumnIndex(TIMELINE_COLOR_COL));
+//                String groupImage = c.getString(c.getColumnIndex(TIMELINE_IMAGE_COL));
+//                g = new Timeline(groupId, groupName, groupColor, groupImage);
+//            } while (c.moveToNext());
+//        }
+//
+//        db.close();
+//
+//        return g;
+//    }
 
-        return g;
-    }
-
-    public void updateEvent(int id, int year, int month, long date, String title, String desc, Boolean isAllYear, Boolean isAllMonth, int group) {
+    public void updateEvent(int id, int year, int month, long date, String title, String desc, Boolean isAllYear, Boolean isAllMonth, Timeline parentTimeline) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(YEAR_COL, year);
@@ -274,12 +273,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void updateGroup(int id, String name, int color) {
+    public void updateTimeline(int id, String name, int color) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put(GROUP_NAME_COL, name);
-        cv.put(GROUP_COLOR_COL, color);
-        db.update(GROUP_TABLE, cv, GROUP_ID_COL + "=?", new String[]{String.valueOf(id)});
+        cv.put(TIMELINE_NAME_COL, name);
+        cv.put(TIMELINE_COLOR_COL, color);
+        db.update(TIMELINE_TABLE, cv, TIMELINE_ID_COL + "=?", new String[]{String.valueOf(id)});
         db.close();
     }
 
@@ -289,71 +288,81 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void deleteGroup(int gid) {
+    public void deleteTimeline(int gid) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(GROUP_TABLE, GROUP_ID_COL + "=?", new String[]{String.valueOf(gid)});
-        db.delete(EVENTS_TABLE, GROUP_ID_COL + "=?", new String[]{String.valueOf(gid)});
-        db.delete(GROUP_TO_GROUP_TABLE, GTG_PARENT_ID + "=?", new String[]{String.valueOf(gid)});
+        db.delete(TIMELINE_TABLE, TIMELINE_ID_COL + "=?", new String[]{String.valueOf(gid)});
+        db.delete(EVENTS_TABLE, TIMELINE_ID_COL + "=?", new String[]{String.valueOf(gid)});
+        db.delete(TIMELINE_TO_TIMELINE_TABLE, TT_PARENT_ID + "=?", new String[]{String.valueOf(gid)});
         db.close();
     }
 
-    public List<Timeline> getAllGroupsWithExclusion(int exclusion) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery(RawQueries.ALL_GROUPS(exclusion), null);
+//    public List<Timeline> getAllGroupsWithExclusion(int exclusion) {
+//        SQLiteDatabase db = this.getReadableDatabase();
+//        Cursor c = db.rawQuery(RawQueries.ALL_TIMELINES(exclusion), null);
+//
+//        ArrayList<Timeline> groups = new ArrayList<Timeline>();
+//        if (c.moveToNext()) {
+//            do {
+//                int gid = c.getInt(c.getColumnIndex(TIMELINE_ID_COL));
+//                String gname = c.getString(c.getColumnIndex(TIMELINE_NAME_COL));
+//                int gcolor = c.getInt(c.getColumnIndex(TIMELINE_COLOR_COL));
+//                String gimage = c.getString(c.getColumnIndex(TIMELINE_IMAGE_COL));
+//                groups.add(new Timeline(gid, gname, gcolor, gimage));
+//            } while (c.moveToNext());
+//        }
+//        db.close();
+//
+//        return groups;
+//    }
 
-        ArrayList<Timeline> groups = new ArrayList<Timeline>();
+    public List<Timeline> getAllTimelines() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(RawQueries.ALL_TIMELINES(), null);
+
+        ArrayList<Timeline> timelines = new ArrayList<Timeline>();
         if (c.moveToNext()) {
             do {
-                int gid = c.getInt(c.getColumnIndex(GROUP_ID_COL));
-                String gname = c.getString(c.getColumnIndex(GROUP_NAME_COL));
-                int gcolor = c.getInt(c.getColumnIndex(GROUP_COLOR_COL));
-                String gimage = c.getString(c.getColumnIndex(GROUP_IMAGE_COL));
-                groups.add(new Timeline(gid, gname, gcolor, gimage));
+                timelines.add(parseTimeline(c));
             } while (c.moveToNext());
         }
         db.close();
 
-        return groups;
+        Logger.v(TAG, "getAllTimelines() - total groups: " + timelines.size());
+
+
+        return timelines;
     }
 
-    public List<Timeline> getAllGroups() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery(RawQueries.ALL_GROUPS(), null);
+//    public List<Event> getAllEventsByGroupSet(List<Integer> groups) {
+//        StringBuilder SQLfiedGroup = new StringBuilder();
+//        for (int i = 0; i < groups.size(); i++) {
+//            if (i != groups.size() - 1) {
+//                SQLfiedGroup.append("groupstable." + TIMELINE_ID_COL + " = " + groups.get(i) + " or ");
+//            } else {
+//                SQLfiedGroup.append("groupstable." + TIMELINE_ID_COL + " = " + groups.get(i));
+//            }
+//        }
+//
+//        SQLiteDatabase db = this.getReadableDatabase();
+//        Cursor c = db.rawQuery(RawQueries.ALL_EVENTS_BY_TIMELINE(SQLfiedGroup), null);
+//
+//        List<Event> events = parseEvents(c);
+//        db.close();
+//
+//        return events;
+//    }
 
-        ArrayList<Timeline> groups = new ArrayList<Timeline>();
+    public List<Event> getAllEventsByTimeline(long timelineId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(RawQueries.ALL_EVENTS_BY_TIMELINE(timelineId), null);
+        List<Event> events = new ArrayList();
         if (c.moveToNext()) {
             do {
-                int gid = c.getInt(c.getColumnIndex(GROUP_ID_COL));
-                String gname = c.getString(c.getColumnIndex(GROUP_NAME_COL));
-                int gcolor = c.getInt(c.getColumnIndex(GROUP_COLOR_COL));
-                String gimage = c.getString(c.getColumnIndex(GROUP_IMAGE_COL));
-                groups.add(new Timeline(gid, gname, gcolor, gimage));
+                events.add(parseEvent(c));
             } while (c.moveToNext());
         }
         db.close();
-
-        return groups;
-    }
-
-    public List<Pair<String, List<Event>>> getAllEventsByGroupSet(List<Integer> groups) {
-        StringBuilder SQLfiedGroup = new StringBuilder();
-        for (int i = 0; i < groups.size(); i++) {
-            if (i != groups.size() - 1) {
-                SQLfiedGroup.append("groupstable." + GROUP_ID_COL + " = " + groups.get(i) + " or ");
-            } else {
-                SQLfiedGroup.append("groupstable." + GROUP_ID_COL + " = " + groups.get(i));
-            }
-        }
-
-        return getAllEventsByGroup(SQLfiedGroup.toString());
-    }
-
-    public List<Pair<String, List<Event>>> getAllEventsByGroup(String group) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery(RawQueries.ALL_EVENTS_BY_GROUP(group), null);
-
-        List<Pair<String, List<Event>>> events = parseEvents(c);
-        db.close();
+        Logger.v(TAG, "getAllEventsByTimeline() - group: " + timelineId + " total events: " + events.size());
 
         return events;
     }
@@ -369,85 +378,60 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //		return events;
 //	}
 
-    public List<Pair<String, List<Event>>> parseEvents(Cursor c) {
-        ArrayList<Event> le = new ArrayList<Event>();
-        ArrayList<Pair<String, List<Event>>> years = new ArrayList<Pair<String, List<Event>>>();
-        if (c.moveToNext()) {
-            do {
-                int id = c.getInt(c.getColumnIndex(ID_COL));
-                int year = c.getInt(c.getColumnIndex(YEAR_COL));
-                int month = c.getInt(c.getColumnIndex(MONTH_COL));
-                long date = c.getLong(c.getColumnIndex(DATE_COL));
-                String title = c.getString(c.getColumnIndex(TITLE_COL));
-                String desc = c.getString(c.getColumnIndex(DESC_COL));
-                int isAllYear = c.getInt(c.getColumnIndex(ALLYEAR_COL));
-                int isAllMonth = c.getInt(c.getColumnIndex(ALLMONTH_COL));
-                String groupName = c.getString(c.getColumnIndex(GROUP_NAME_COL));
-                int groupId = c.getInt(c.getColumnIndex(GROUP_ID_COL));
-                int groupColor = c.getInt(c.getColumnIndex(GROUP_COLOR_COL));
-                le.add(new Event(id, year, month, date, title, desc, isAllYear, isAllMonth, groupId, groupColor, groupName));
-            } while (c.moveToNext());
-
-            Logger.d(TAG, "Raw array size@DatebaseHelper.getAllEvents(): " + le.size());
-
-            for (int i = 0; i < le.size(); i++) { //For every item in the DB...
-                String year = String.valueOf(le.get(i).getYear()); //Get the year for the item...
-                Logger.d(TAG, "Parse item: " + le.get(i).getYear());
-                Boolean found = false;
-                if (years.size() > 0) {
-                    for (int j = 0; j < years.size(); j++) { //Now for every year in the sorted list...
-                        if (years.get(j).first.equals(year) && years.get(j) != null) {
-                            ArrayList<Event> events = (ArrayList<Event>) years.get(j).second;
-                            events.add(le.get(i));
-                            Logger.d(TAG, "Add item to exsisting year: " + years.get(j).second + " which has a events array " + events.size());
-                            found = true;
-                        }
-                    }
-                }
-
-                if (years.size() == 0 || found == false) {
-                    ArrayList<Event> events = new ArrayList<Event>();
-                    events.add(le.get(i));
-                    years.add(new Pair<String, List<Event>>(year, events));
-                    Logger.d(TAG, "Add item to new year: " + year + " which has a events array " + events.size());
-                }
-            }
-        }
-
-        Logger.d(TAG, "years size@DatebaseHelper.getAllEvents(): " + years.size());
-        return years;
+    public Timeline parseTimeline(Cursor c) {
+        int gid = c.getInt(c.getColumnIndex(TIMELINE_ID_COL));
+        String gname = c.getString(c.getColumnIndex(TIMELINE_NAME_COL));
+        String gdesc = c.getString(c.getColumnIndex(TIMELINE_DESC_COL));
+        int gcolor = c.getInt(c.getColumnIndex(TIMELINE_COLOR_COL));
+        String gimage = c.getString(c.getColumnIndex(TIMELINE_IMAGE_COL));
+        return new Timeline(gid, gname, gdesc, gcolor, gimage);
     }
 
-    public void updateLinksToGroup(int parentGroupId, ArrayList<Integer> newlinkedGroupIds) {
-        if (newlinkedGroupIds.size() > 0) {
-            ArrayList<Integer> oldlinkedGroupIds = getLinksToGroup(parentGroupId);
-            for (Integer link : oldlinkedGroupIds) {
-                if (!newlinkedGroupIds.contains(link)) {
-                    oldlinkedGroupIds.remove(link);
-                    deleteLinkToGroup(parentGroupId, link);
-                }
-            }
+    public Event parseEvent(Cursor c) {
+        int id = c.getInt(c.getColumnIndex(ID_COL));
+        int year = c.getInt(c.getColumnIndex(YEAR_COL));
+        int month = c.getInt(c.getColumnIndex(MONTH_COL));
+        long date = c.getLong(c.getColumnIndex(DATE_COL));
+        String title = c.getString(c.getColumnIndex(TITLE_COL));
+        String desc = c.getString(c.getColumnIndex(DESC_COL));
+        boolean isAllYear = c.getInt(c.getColumnIndex(ALLYEAR_COL)) == 1 ? true : false;
+        boolean isAllMonth = c.getInt(c.getColumnIndex(ALLMONTH_COL)) == 1 ? true : false;
 
-            for (Integer link : newlinkedGroupIds) {
-                if (!oldlinkedGroupIds.contains(link)) {
-                    addLinkToGroup(parentGroupId, link);
-                }
-            }
-        } else {
-            ArrayList<Integer> oldlinkedGroupIds = getLinksToGroup(parentGroupId);
-            for (Integer link : oldlinkedGroupIds) {
-                deleteLinkToGroup(parentGroupId, link);
-            }
-        }
+        Timeline parentTimeline = parseTimeline(c);
+
+        return new Event(id, year, month, date, title, desc, isAllYear, isAllMonth, parentTimeline);
     }
+
+//    public void updateLinksToGroup(int parentGroupId, ArrayList<Integer> newlinkedGroupIds) {
+//        if (newlinkedGroupIds.size() > 0) {
+//            ArrayList<Integer> oldlinkedGroupIds = getLinksToGroup(parentGroupId);
+//            for (Integer link : oldlinkedGroupIds) {
+//                if (!newlinkedGroupIds.contains(link)) {
+//                    oldlinkedGroupIds.remove(link);
+//                    deleteLinkToGroup(parentGroupId, link);
+//                }
+//            }
+//
+//            for (Integer link : newlinkedGroupIds) {
+//                if (!oldlinkedGroupIds.contains(link)) {
+//                    addLinkToGroup(parentGroupId, link);
+//                }
+//            }
+//        } else {
+//            ArrayList<Integer> oldlinkedGroupIds = getLinksToGroup(parentGroupId);
+//            for (Integer link : oldlinkedGroupIds) {
+//                deleteLinkToGroup(parentGroupId, link);
+//            }
+//        }
+//    }
 
     public void addLinkToGroup(int parentGroupId, int linkedGroupId) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues cv = new ContentValues();
-        cv.put(GTG_PARENT_ID, parentGroupId);
-        cv.put(GTG_LINKED_ID, linkedGroupId);
-        db.insert(GROUP_TO_GROUP_TABLE, GTG_ID, cv);
+        cv.put(TT_PARENT_ID, parentGroupId);
+        cv.put(TT_LINKED_ID, linkedGroupId);
+        db.insert(TIMELINE_TO_TIMELINE_TABLE, TT_ID, cv);
 
         db.close();
 
@@ -456,58 +440,58 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void deleteLinkToGroup(int parentGroupId, int linkedGroupId) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(GROUP_TO_GROUP_TABLE, GTG_PARENT_ID + "=? AND " + GTG_LINKED_ID + "=?", new String[]{Integer.toString(parentGroupId), Integer.toString(linkedGroupId)});
+        db.delete(TIMELINE_TO_TIMELINE_TABLE, TT_PARENT_ID + "=? AND " + TT_LINKED_ID + "=?", new String[]{Integer.toString(parentGroupId), Integer.toString(linkedGroupId)});
         db.close();
         Logger.d(TAG, "deleteLinkedGroup@DatebaseHelper.deleteLinkToGroup(): parent = " + parentGroupId + ", link = " + linkedGroupId);
     }
 
-    public ArrayList<Integer> getRecursiveLinksToGroup(ArrayList<Integer> parentGroupId) {
-        HashSet<Integer> allLinked = new HashSet<Integer>();
-        allLinked.addAll(parentGroupId);
+//    public ArrayList<Integer> getRecursiveLinksToGroup(ArrayList<Integer> parentGroupId) {
+//        HashSet<Integer> allLinked = new HashSet<Integer>();
+//        allLinked.addAll(parentGroupId);
+//
+//        ArrayList<Integer> nextParentGroupIds = new ArrayList<Integer>();
+//
+//        ArrayList<Integer> checkingParentGroupIds = new ArrayList<Integer>();
+//        checkingParentGroupIds.addAll(parentGroupId);
+//
+//        do {
+//            ArrayList<Integer> links = getLinksToGroup(checkingParentGroupIds);
+//            for (Integer link : links) {
+//                if (!allLinked.contains(link)) {
+//                    allLinked.add(link);
+//                    nextParentGroupIds.add(link);
+//                }
+//            }
+//            checkingParentGroupIds = nextParentGroupIds;
+//            nextParentGroupIds.clear();
+//        } while (checkingParentGroupIds.isEmpty() == false);
+//
+//        return new ArrayList<Integer>(allLinked);
+//    }
 
-        ArrayList<Integer> nextParentGroupIds = new ArrayList<Integer>();
+//    public ArrayList<Integer> getLinksToGroup(int parentGroupId) {
+//        ArrayList<Integer> tempIntArray = new ArrayList<Integer>();
+//        tempIntArray.add(parentGroupId);
+//
+//        return getLinksToGroup(tempIntArray);
+//    }
 
-        ArrayList<Integer> checkingParentGroupIds = new ArrayList<Integer>();
-        checkingParentGroupIds.addAll(parentGroupId);
-
-        do {
-            ArrayList<Integer> links = getLinksToGroup(checkingParentGroupIds);
-            for (Integer link : links) {
-                if (!allLinked.contains(link)) {
-                    allLinked.add(link);
-                    nextParentGroupIds.add(link);
-                }
-            }
-            checkingParentGroupIds = nextParentGroupIds;
-            nextParentGroupIds.clear();
-        } while (checkingParentGroupIds.isEmpty() == false);
-
-        return new ArrayList<Integer>(allLinked);
-    }
-
-    public ArrayList<Integer> getLinksToGroup(int parentGroupId) {
-        ArrayList<Integer> tempIntArray = new ArrayList<Integer>();
-        tempIntArray.add(parentGroupId);
-
-        return getLinksToGroup(tempIntArray);
-    }
-
-    public ArrayList<Integer> getLinksToGroup(ArrayList<Integer> parentGroupIds) {
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        Cursor c = db.rawQuery(RawQueries.GET_LINKED_GROUP_IDS(parentGroupIds), null);
-
-        ArrayList<Integer> linkedGroupsIds = new ArrayList<Integer>();
-
-        if (c.moveToNext()) {
-            do {
-                int linkedid = c.getInt(c.getColumnIndex(GTG_LINKED_ID));
-                linkedGroupsIds.add(linkedid);
-            } while (c.moveToNext());
-        }
-
-        return linkedGroupsIds;
-    }
+//    public ArrayList<Integer> getLinksToGroup(ArrayList<Integer> parentGroupIds) {
+//        SQLiteDatabase db = this.getReadableDatabase();
+//
+//        Cursor c = db.rawQuery(RawQueries.GET_LINKED_TIMELINE_IDS(parentGroupIds), null);
+//
+//        ArrayList<Integer> linkedGroupsIds = new ArrayList<Integer>();
+//
+//        if (c.moveToNext()) {
+//            do {
+//                int linkedid = c.getInt(c.getColumnIndex(TT_LINKED_ID));
+//                linkedGroupsIds.add(linkedid);
+//            } while (c.moveToNext());
+//        }
+//
+//        return linkedGroupsIds;
+//    }
 
     //check number of linked children
 
@@ -530,17 +514,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //		
 //		
 //		SQLiteDatabase db = this.getReadableDatabase();
-//		Cursor c = db.rawQuery(RawQueries.ALL_EVENTS_BY_GROUP("groupstable." + GROUP_ID_COL + " = " + gid), null);
+//		Cursor c = db.rawQuery(RawQueries.ALL_EVENTS_BY_TIMELINE("groupstable." + TIMELINE_ID_COL + " = " + gid), null);
 //		
 //		try {
 //			CSVWriter writer = new CSVWriter(new FileWriter(filename));
 //			if(!forFlashCards){
 //				c.moveToFirst();
 //				String gname = "";
-//				gname = c.getString(c.getColumnIndex(GROUP_NAME_COL));
+//				gname = c.getString(c.getColumnIndex(TIMELINE_NAME_COL));
 //				
 //				String gcolor = "";
-//				gcolor = c.getString(c.getColumnIndex(GROUP_COLOR_COL));
+//				gcolor = c.getString(c.getColumnIndex(TIMELINE_COLOR_COL));
 //				
 //				String[] groupDesc = {gname, gcolor};
 //				

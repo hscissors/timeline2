@@ -1,98 +1,88 @@
 package com.soundsofpolaris.timeline.event;
 
+import com.soundsofpolaris.timeline.timeline.Timeline;
+
 import java.text.SimpleDateFormat;
 
 public class Event {
-	private int id;
-	private int year;
-	private int month;
-	private long date;
-	private String title;
-	private String desc;
-	private int groupId;
-	private int groupColor;
-	private String groupName;
-	private Boolean isAllYear;
-	private Boolean isAllMonth;
+	private long mId;
+	private int mYear;
+	private int mMonth;
+	private long mDate;
+	private String mTitle;
+	private String mDesc;
+	private Timeline mParentTimeline;
+	private Boolean mIsAllYear;
+	private Boolean mIsAllMonth;
 	
-	public Event(int id, int year, int month, long date, String title, String desc, int isAllYear, int isAllMonth, int groupId, int groupColor, String groupName){
-		this.id = id;
-		this.year = year;
-		this.month = month;
-		this.date = date;
-		this.title = title;
-		this.desc = desc;
-		this.isAllYear = (isAllYear == 1? true : false);
-		this.isAllMonth = (isAllMonth == 1? true : false);
-		this.groupId = groupId;
-		this.groupColor = groupColor;
-		this.groupName = groupName;
+	public Event(long id, int year, int month, long date, String title, String desc, boolean isAllYear, boolean isAllMonth, Timeline parentTimeline){
+		mId = id;
+		mYear = year;
+		mMonth = month;
+		mDate = date;
+		mTitle = title;
+		mDesc = desc;
+		mIsAllYear = isAllYear;
+		mIsAllMonth = isAllMonth;
+		mParentTimeline = parentTimeline;
 	}
 	
-	public int getId(){
-		return id;
+	public long getId(){
+		return mId;
 	}
-	
+
 	public String getTitle(){
-		return title;
+		return mTitle;
 	}
 	
 	public String getDescription(){
-		return desc;
+		return mDesc;
 	}
 	
 	public int getYear(){
-		return year;
+		return mYear;
 	}
 
     public String getMonth(){
-        //TODO Format month
-        return "Oct";
+        SimpleDateFormat sf = new SimpleDateFormat("MMM");
+        return sf.format(mDate);
     }
 
     public String getDay(){
-        //TODO Format day
-        return "12";
+        SimpleDateFormat sf = new SimpleDateFormat("d");
+        return sf.format(mDate);
     }
 	
 	public String getPrettyDate(){
 		SimpleDateFormat sf;
-		if(isAllYear){
+		if(mIsAllYear){
 			sf = new SimpleDateFormat("y");
-		} else if (isAllMonth) {
+		} else if (mIsAllMonth) {
 			sf = new SimpleDateFormat("MMMMM");
 		} else {
 			sf = new SimpleDateFormat("MMMMM dd");
 		}
-		return sf.format(date);
+		return sf.format(mDate);
 	}
 	
 	public long getUnixDate(){
-		return date;
+		return mDate;
 	}
 	
-	public int getGroupId(){
-		return this.groupId;
+	public Timeline getParentTimeline(){
+		return mParentTimeline;
 	}
-	
-	public String getGroupName(){
-		return this.groupName;
-	}
-	
-	public int getGroupColor(){
-		return this.groupColor;
-	}
-	
+
 	public Boolean isAllYear(){
-		return this.isAllYear;
+		return mIsAllYear;
 	}
 	
 	public Boolean isAllMonth(){
-		return this.isAllMonth;
+		return mIsAllMonth;
 	}
 	
 	@Override
 	public String toString(){
-		return this.title + ", " + this.getYear() + ", " + this.date + ", " + ", allyear?" + this.isAllYear + ", allmonth?" + this.isAllMonth;
+		return mTitle + ", " + getYear() + ", " + getPrettyDate() + ", " + ", allyear?" + mIsAllYear + ", allmonth?" + mIsAllMonth;
 	}
 }

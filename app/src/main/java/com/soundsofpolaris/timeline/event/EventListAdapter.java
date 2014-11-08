@@ -12,14 +12,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.soundsofpolaris.timeline.R;
+import com.soundsofpolaris.timeline.base.BaseActivity;
 import com.soundsofpolaris.timeline.gui.StickyRecyclerHeadersAdapter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements StickyRecyclerHeadersAdapter {
 
-    private ArrayList<Event> mEvents;
-    public EventListAdapter(ArrayList<Event> events) {
+    private List<Event> mEvents;
+    public EventListAdapter(List<Event> events) {
         mEvents = events;
     }
 
@@ -57,7 +59,7 @@ public class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         listItemMenuButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(final View v) {
                 PopupMenu menu = new PopupMenu(v.getContext(), v);
                 menu.inflate(R.menu.event_list_item_menu);
                 menu.show();
@@ -67,8 +69,11 @@ public class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         int id = item.getItemId();
                         switch (id) {
                             case R.id.action_edit:
-                                vh.mEventContainer.setVisibility(View.GONE);
-                                vh.mLayout.addView(new EventEditView(view.getContext()));
+                                ((BaseActivity) v.getContext()).getSupportFragmentManager()
+                                        .beginTransaction()
+                                        .replace(R.id.container, EventEditFragment.newInstance(null), "tag")
+                                        .addToBackStack("tag")
+                                        .commit();
                                 return true;
                         }
                         return false;
@@ -82,7 +87,7 @@ public class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, final int pos) {
         Event event = mEvents.get(pos);
-        ((EventViewHolder) viewHolder).mDateContainer.setBackgroundColor(event.getGroupColor());
+        ((EventViewHolder) viewHolder).mDateContainer.setBackgroundColor(event.getParentTimeline().getColor());
 
         ((EventViewHolder) viewHolder).mDay.setText(event.getDay());
         ((EventViewHolder) viewHolder).mMonth.setText(event.getMonth());
@@ -105,7 +110,15 @@ public class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public void onBindHeaderViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         TextView header = (TextView) viewHolder.itemView;
-        header.setText(String.valueOf(mEvents.get(position).getYear()));
+        StringBuilder headerLabel = new StringBuilder();
+        int year = mEvents.get(position).getYear();
+        if(year < 0){
+            headerLabel.append(year * -1);
+            headerLabel.append(" BCE");
+        } else {
+            headerLabel.append(year);
+        }
+        header.setText(headerLabel.toString());
     }
 
     @Override

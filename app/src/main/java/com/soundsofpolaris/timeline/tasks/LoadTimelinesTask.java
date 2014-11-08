@@ -25,7 +25,7 @@ public class LoadTimelinesTask extends AsyncTask<Void, Void, List<Timeline>> {
 
     @Override
     protected List<Timeline> doInBackground(Void... params) {
-        return TimelineApplication.getInstance().getDatabaseHelper().getAllGroups();
+        return TimelineApplication.getInstance().getDatabaseHelper().getAllTimelines();
     }
 
     @Override

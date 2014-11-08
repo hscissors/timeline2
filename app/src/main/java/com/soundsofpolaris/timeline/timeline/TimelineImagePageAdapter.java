@@ -15,26 +15,33 @@ import java.util.ArrayList;
 /**
  * Created by hscissors on 11/1/14.
  */
-public class TimelineEditViewImagePageAdapter extends PagerAdapter {
+public class TimelineImagePageAdapter extends PagerAdapter {
 
     private ArrayList<String> mImageUrls;
-    private View mColor;
-    private int mCurrentPagePosition = -1;
+    private View mColorView;
+    private View mCurrentPage;
+    private int mCurrentPagePosition;
 
-    public TimelineEditViewImagePageAdapter(ArrayList<String> imageUrls, View color){
+    public TimelineImagePageAdapter(ArrayList<String> imageUrls, View colorView){
         mImageUrls = imageUrls;
-        mColor = color;
+        mColorView = colorView;
     }
 
-    public void setCurrentPagePosition(int currentPagePosition){
-        mCurrentPagePosition = currentPagePosition;
+    public View getCurrentPage(){
+        return mCurrentPage;
+    }
+
+    @Override
+    public void setPrimaryItem(ViewGroup container, int position, Object object) {
+        mCurrentPage = (View) object;
+        mCurrentPagePosition = position;
+        super.setPrimaryItem(container, position, object);
     }
 
     @Override
     public View instantiateItem(final ViewGroup container, final int position) {
         final View view = LayoutInflater.from(container.getContext())
-                .inflate(R.layout.timeline_edit_view_image_list_item, container, false);
-        view.setTag(position);
+                .inflate(R.layout.timeline_edit_fragment_image_pager_item, container, false);
 
         final PaletteNetworkImageView image = (PaletteNetworkImageView) view.findViewById(R.id.image_list_item_image_view);
         image.setImageUrl(mImageUrls.get(position), TimelineApplication.getInstance().getImageLoader());
@@ -53,11 +60,13 @@ public class TimelineEditViewImagePageAdapter extends PagerAdapter {
             @Override
             public void onPaletteGenerated(Palette palette) {
                 if(position == mCurrentPagePosition){
-                    mColor.setBackgroundColor(palette.getDarkVibrantColor(R.color.alternate));
+                    mColorView.setBackgroundColor(palette.getDarkVibrantColor(R.color.alternate));
                 }
                 image.setTag(palette);
             }
         });
+
+        view.setTag(image);
         container.addView(view);
         return view;
     }
