@@ -7,10 +7,13 @@ import android.graphics.drawable.ColorDrawable;
 import android.media.Image;
 import android.os.Bundle;
 
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.graphics.Palette;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -67,6 +70,9 @@ public class TimelineEditFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        getActivity().supportInvalidateOptionsMenu();a
+
         FrameLayout rootView = (FrameLayout) inflater.inflate(R.layout.timeline_edit_fragment, container, false);
 
         mImageContainer = (FrameLayout) rootView.findViewById(R.id.timeline_edit_new_image_container);
@@ -198,6 +204,11 @@ public class TimelineEditFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
     }
 }
 

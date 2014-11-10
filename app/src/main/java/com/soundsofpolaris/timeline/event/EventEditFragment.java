@@ -56,6 +56,8 @@ public class EventEditFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+        getActivity().supportInvalidateOptionsMenu();
         if (getArguments() != null) {
             mParentTimeline = (Timeline) getArguments().getParcelable(PARENT_TIMELINE);
         }
@@ -109,6 +111,7 @@ public class EventEditFragment extends Fragment {
         eraAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
 
         mEra.setAdapter(eraAdapter);
+        mEra.setSelection(1);
         mEra.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -134,19 +137,20 @@ public class EventEditFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 boolean isAllMonth = false;
-                int day = 1;
+                int day = 0;
                 if(!Utils.isEmpty(mDay.getText().toString())){
                    day = Integer.parseInt(mDay.getText().toString());
                 } else {
-                   isAllMonth = true;
+                   isAllMonth = true; //If there is no day, treat date as all month
                 }
 
                 int month = mMonth.getSelectedItemPosition();
                 boolean isAllYear = false;
-                if(isAllMonth && month == 0){
+                if(isAllMonth && month == 0){ //If there is no day and no month, treat as all year
+                    isAllMonth = false;
                     isAllYear = true;
                 } else {
-                    month--; //0-based month
+                    month--; //0-based month;
                 }
 
                 int year;
@@ -157,15 +161,20 @@ public class EventEditFragment extends Fragment {
                     return;
                 }
 
-                int era;
-                if(mEra.getSelectedItemPosition() == 0){ //CE
-                    era = 1;
-                } else { //BCE
-                    era = 0;
+                int era = mEra.getSelectedItemPosition();
+                if(era == 0){ //BCE
                     year = year * -1; //for sorting purposes
                 }
 
-                GregorianCalendar date = new GregorianCalendar(year, month, day);
+                GregorianCalendar date;
+                if(isAllMonth) {
+                    date  = new GregorianCalendar(year, month, 1);
+                } else  if (isAllYear){
+                    date = new GregorianCalendar(year, 1, 1);
+                } else {
+                    date = new GregorianCalendar(year, month, day);
+                }
+
                 date.set(Calendar.ERA, era);
 
                 String title = mTitle.getText().toString();

@@ -48,22 +48,6 @@ public class EventActivity extends BaseActivity implements DrawerLayout.DrawerLi
         //linkedTimelineList.setAdapter(new LinkedTimelineListAdapter(0));
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.event_list_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            onBackPressed();
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     @Override
     public void onBackPressed() {
         super.onBackPressed();

@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.soundsofpolaris.timeline">
+    package="com.soundsofpolaris.timeline" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-        android:name=".TimelineApplication"
+        android:name="com.soundsofpolaris.timeline.TimelineApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme" >
         <activity
-            android:name=".timeline.TimelineActivity"
-            android:label="@string/app_name"
-            >
+            android:name="com.soundsofpolaris.timeline.timeline.TimelineActivity"
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,8 +22,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".event.EventActivity"
-            android:label="@string/app_name">
+            android:name="com.soundsofpolaris.timeline.event.EventActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="com.soundsofpolaris.timeline.timeline.A"
+            android:label="@string/title_activity_a" >
         </activity>
     </application>
 
