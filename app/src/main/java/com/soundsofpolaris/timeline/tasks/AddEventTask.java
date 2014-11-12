@@ -6,7 +6,7 @@ import com.soundsofpolaris.timeline.TimelineApplication;
 import com.soundsofpolaris.timeline.event.Event;
 import com.soundsofpolaris.timeline.timeline.Timeline;
 
-public class SaveEventTask extends AsyncTask<Void, Void, Event> {
+public class AddEventTask extends AsyncTask<Void, Void, Event> {
 
     private Listener mListener;
 
@@ -23,7 +23,7 @@ public class SaveEventTask extends AsyncTask<Void, Void, Event> {
         public void onTaskComplete(Event event);
     }
 
-    public SaveEventTask(int year, int month, long date, String title, String desc, boolean isAllYear, boolean isAllMonth, Timeline parentTimeline) {
+    public AddEventTask(int year, int month, long date, String title, String desc, boolean isAllYear, boolean isAllMonth, Timeline parentTimeline) {
         mYear = year;
         mMonth = month;
         mDate = date;

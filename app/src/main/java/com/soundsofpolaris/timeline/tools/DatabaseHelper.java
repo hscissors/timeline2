@@ -184,7 +184,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public Timeline addGroup(String title, String desc, int color, String imagefile) {
+    public Timeline addTimeline(String title, String desc, int color, String imagefile) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(TIMELINE_NAME_COL, title);
@@ -273,13 +273,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void updateTimeline(int id, String name, int color) {
+    public Timeline updateTimeline(long gid, String title, String desc, int color, String imagefile){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put(TIMELINE_NAME_COL, name);
+        cv.put(TIMELINE_NAME_COL, title);
+        cv.put(TIMELINE_DESC_COL, desc);
         cv.put(TIMELINE_COLOR_COL, color);
-        db.update(TIMELINE_TABLE, cv, TIMELINE_ID_COL + "=?", new String[]{String.valueOf(id)});
+        cv.put(TIMELINE_IMAGE_COL, imagefile);
+        db.update(TIMELINE_TABLE, cv, TIMELINE_ID_COL + "=?", new String[]{String.valueOf(gid)});
         db.close();
+
+        return new Timeline(gid, title, desc, color, imagefile);
     }
 
     public void deleteEvent(int eid) {

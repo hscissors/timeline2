@@ -4,10 +4,13 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 
 import com.soundsofpolaris.timeline.R;
+import com.soundsofpolaris.timeline.base.BaseActivity;
 import com.soundsofpolaris.timeline.event.EventActivity;
 import com.soundsofpolaris.timeline.tools.FileHelper;
 import com.soundsofpolaris.timeline.tools.Utils;
@@ -16,7 +19,13 @@ import java.util.List;
 
 public class TimelineListAdapter extends RecyclerView.Adapter<TimelineListItemViewHolder> {
 
-    List<Timeline> mTimelines;
+    private List<Timeline> mTimelines;
+    private OnItemClickListener mOnItemClickListener;
+
+    public static interface OnItemClickListener{
+        public void onItemClick(int pos);
+        public boolean onItemMenuClick(MenuItem item, int pos);
+    }
 
     public TimelineListAdapter(List<Timeline> timelines) {
         mTimelines = timelines;
@@ -52,9 +61,22 @@ public class TimelineListAdapter extends RecyclerView.Adapter<TimelineListItemVi
         viewHolder.mCardLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                Intent i = new Intent(v.getContext(), EventActivity.class);
-                i.putExtra(TimelineActivity.SELECTED_TIMELINE, mTimelines.get(pos));
-                ((Activity) v.getContext()).startActivity(i);
+                mOnItemClickListener.onItemClick(pos);
+            }
+        });
+
+        viewHolder.mItemMenuButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                PopupMenu menu = new PopupMenu(v.getContext(), v);
+                menu.inflate(R.menu.timeline_list_item_menu);
+                menu.show();
+                menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        return mOnItemClickListener.onItemMenuClick(item, pos);
+                    }
+                });
             }
         });
     }
@@ -62,5 +84,9 @@ public class TimelineListAdapter extends RecyclerView.Adapter<TimelineListItemVi
     @Override
     public int getItemCount() {
         return mTimelines.size();
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener){
+        mOnItemClickListener = onItemClickListener;
     }
 }

@@ -17,7 +17,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.soundsofpolaris.timeline.R;
-import com.soundsofpolaris.timeline.tasks.SaveEventTask;
+import com.soundsofpolaris.timeline.tasks.AddEventTask;
 import com.soundsofpolaris.timeline.timeline.Timeline;
 import com.soundsofpolaris.timeline.tools.Utils;
 
@@ -185,8 +185,8 @@ public class EventEditFragment extends Fragment {
 
                 String desc = mDesc.getText().toString();
 
-                SaveEventTask task = new SaveEventTask(year, month, date.getTimeInMillis(), title, desc, isAllYear, isAllMonth, mParentTimeline);
-                task.setListener(new SaveEventTask.Listener(){
+                AddEventTask task = new AddEventTask(year, month, date.getTimeInMillis(), title, desc, isAllYear, isAllMonth, mParentTimeline);
+                task.setListener(new AddEventTask.Listener(){
                     @Override
                     public void onTaskComplete(Event event) {
                         //return event

@@ -20,7 +20,7 @@ public class TimelineActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.timeline_activity);
         if (savedInstanceState == null) {
-            getFragmentManager().beginTransaction()
+            getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, TimelineListFragment.newInstance())
                     .commit();
         }

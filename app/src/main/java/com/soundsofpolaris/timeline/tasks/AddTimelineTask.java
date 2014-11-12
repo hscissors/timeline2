@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Created by hscissors on 11/4/14.
  */
-public class SaveTimelineTask extends AsyncTask<Void, Void, Timeline> {
+public class AddTimelineTask extends AsyncTask<Void, Void, Timeline> {
 
     private Listener mListener;
 
@@ -23,7 +23,7 @@ public class SaveTimelineTask extends AsyncTask<Void, Void, Timeline> {
     private String mImageFileName;
     private Bitmap mImage;
 
-    public SaveTimelineTask(String title, String desc, int color, String imageFileName, Bitmap image) {
+    public AddTimelineTask(String title, String desc, int color, String imageFileName, Bitmap image) {
         mTitle = title;
         mDesc = desc;
         mColor = color;
@@ -42,7 +42,7 @@ public class SaveTimelineTask extends AsyncTask<Void, Void, Timeline> {
             FileHelper.saveImage(mImageFileName, mImage);
         }
 
-        return TimelineApplication.getInstance().getDatabaseHelper().addGroup(mTitle, mDesc, mColor, mImageFileName);
+        return TimelineApplication.getInstance().getDatabaseHelper().addTimeline(mTitle, mDesc, mColor, mImageFileName);
     }
 
     @Override

@@ -28,7 +28,7 @@ public class EventActivity extends BaseActivity implements DrawerLayout.DrawerLi
         Timeline selectedTimeline = (Timeline) getIntent().getExtras().getParcelable(TimelineActivity.SELECTED_TIMELINE);
 
         if (savedInstanceState == null) {
-            getFragmentManager().beginTransaction()
+            getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, EventListFragment.newInstance(selectedTimeline))
                     .commit();
         }

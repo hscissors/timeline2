@@ -1,5 +1,6 @@
 package com.soundsofpolaris.timeline;
 
+import android.app.Activity;
 import android.app.Application;
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -81,14 +82,14 @@ public class TimelineApplication extends Application {
     }
 
     public static void handleException(Exception e){
-        FragmentManager fm = ((BaseActivity) getInstance().getBaseContext()).getSupportFragmentManager();
-        if(Debug.ENABLED){
-            MessageDialog messageDialog = MessageDialog.newInstance("Error", e.getMessage(), false);
-            messageDialog.show(fm, TAG);
-        } else {
-            MessageDialog messageDialog = MessageDialog.newInstance("Error", getInstance().getResources().getString(R.string.default_error_message), false);
-            messageDialog.show(fm, TAG);
-        }
+//        FragmentManager fm = ((BaseActivity) getInstance().getBaseContext()).getSupportFragmentManager();
+//        if(Debug.ENABLED){
+//            MessageDialog messageDialog = MessageDialog.newInstance("Error", e.getMessage(), false);
+//            messageDialog.show(fm, TAG);
+//        } else {
+//            MessageDialog messageDialog = MessageDialog.newInstance("Error", getInstance().getResources().getString(R.string.default_error_message), false);
+//            messageDialog.show(fm, TAG);
+//        }
     }
 
     public DatabaseHelper getDatabaseHelper() {

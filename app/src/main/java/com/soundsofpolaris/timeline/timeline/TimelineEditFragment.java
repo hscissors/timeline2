@@ -1,19 +1,18 @@
 package com.soundsofpolaris.timeline.timeline;
 
 
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
-import android.media.Image;
 import android.os.Bundle;
 
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.graphics.Palette;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -27,14 +26,20 @@ import com.soundsofpolaris.timeline.R;
 import com.soundsofpolaris.timeline.base.BaseActivity;
 import com.soundsofpolaris.timeline.dialogs.MessageDialog;
 import com.soundsofpolaris.timeline.dialogs.SelectImageSourceDialog;
-import com.soundsofpolaris.timeline.tasks.SaveTimelineTask;
-import com.soundsofpolaris.timeline.tools.FileHelper;
+import com.soundsofpolaris.timeline.tasks.AddTimelineTask;
+import com.soundsofpolaris.timeline.tasks.EditTimelineTask;
 import com.soundsofpolaris.timeline.tools.Utils;
 
 import java.util.ArrayList;
 
 public class TimelineEditFragment extends Fragment {
     private static String TAG = TimelineEditFragment.class.toString();
+
+    public static final String SELECTED_TIMELINE = "selected_timeline";
+    public static final String SELECTED_TIMELINE_POSITION = "selected_timeline_position";
+
+    private Timeline mSelectedTimeline;
+    private int mSelectedTimelinePosition;
 
     private FrameLayout mImageContainer;
     private ImageView mAddImageIcon;
@@ -48,9 +53,11 @@ public class TimelineEditFragment extends Fragment {
     private Button mNegativeButton;
     private Button mPositiveButton;
 
-    public static TimelineEditFragment newInstance() {
+    public static TimelineEditFragment newInstance(Timeline selectedTimeline, int atPosition) {
         TimelineEditFragment fragment = new TimelineEditFragment();
         Bundle args = new Bundle();
+        args.putParcelable(SELECTED_TIMELINE, selectedTimeline);
+        args.putInt(SELECTED_TIMELINE_POSITION, atPosition);
         fragment.setArguments(args);
         return fragment;
     }
@@ -63,7 +70,8 @@ public class TimelineEditFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-
+            mSelectedTimeline = (Timeline) getArguments().getParcelable(SELECTED_TIMELINE);
+            mSelectedTimelinePosition = getArguments().getInt(SELECTED_TIMELINE_POSITION);
         }
     }
 
@@ -71,7 +79,7 @@ public class TimelineEditFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        getActivity().supportInvalidateOptionsMenu();a
+        getActivity().supportInvalidateOptionsMenu();
 
         FrameLayout rootView = (FrameLayout) inflater.inflate(R.layout.timeline_edit_fragment, container, false);
 
@@ -124,16 +132,29 @@ public class TimelineEditFragment extends Fragment {
                 ColorDrawable colorDrawable = (ColorDrawable) mEditColor.getBackground();
                 int color = colorDrawable.getColor();
 
-                SaveTimelineTask task = new SaveTimelineTask(title, desc, color, imageFileName, bitmap);
-                task.setListener(new SaveTimelineTask.Listener(){
+                if(mSelectedTimeline == null) {
+                    AddTimelineTask task = new AddTimelineTask(title, desc, color, imageFileName, bitmap);
+                    task.setListener(new AddTimelineTask.Listener() {
 
-                    @Override
-                    public void onTaskComplete(Timeline timeline) {
-                        //return timeline;
-                    }
-                });
+                        @Override
+                        public void onTaskComplete(Timeline timeline) {
+                            notifyParentFragment(timeline);
+                        }
+                    });
 
-                task.execute();
+                    task.execute();
+                } else {
+                    EditTimelineTask task = new EditTimelineTask(mSelectedTimeline.getId(), title, desc, color, imageFileName, bitmap);
+                    task.setListener(new EditTimelineTask.Listener() {
+
+                        @Override
+                        public void onTaskComplete(Timeline timeline) {
+                            notifyParentFragment(timeline);
+                        }
+                    });
+
+                    task.execute();
+                }
             }
         });
 
@@ -204,6 +225,14 @@ public class TimelineEditFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    private void notifyParentFragment(Timeline timeline){
+        Intent i = new Intent();
+        i.putExtra(SELECTED_TIMELINE, timeline);
+        i.putExtra(SELECTED_TIMELINE_POSITION, mSelectedTimelinePosition);
+        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, i);
+        getActivity().onBackPressed();
     }
 
     @Override
