@@ -28,6 +28,7 @@ import com.soundsofpolaris.timeline.dialogs.MessageDialog;
 import com.soundsofpolaris.timeline.dialogs.SelectImageSourceDialog;
 import com.soundsofpolaris.timeline.tasks.AddTimelineTask;
 import com.soundsofpolaris.timeline.tasks.EditTimelineTask;
+import com.soundsofpolaris.timeline.tasks.LoadImageTask;
 import com.soundsofpolaris.timeline.tools.Utils;
 
 import java.util.ArrayList;
@@ -35,8 +36,8 @@ import java.util.ArrayList;
 public class TimelineEditFragment extends Fragment {
     private static String TAG = TimelineEditFragment.class.toString();
 
-    public static final String SELECTED_TIMELINE = "selected_timeline";
-    public static final String SELECTED_TIMELINE_POSITION = "selected_timeline_position";
+    public static final String EDIT_TIMELINE = "edit_timeline";
+    public static final String EDIT_TIMELINE_POSITION = "edit_timeline_position";
 
     private Timeline mSelectedTimeline;
     private int mSelectedTimelinePosition;
@@ -56,8 +57,8 @@ public class TimelineEditFragment extends Fragment {
     public static TimelineEditFragment newInstance(Timeline selectedTimeline, int atPosition) {
         TimelineEditFragment fragment = new TimelineEditFragment();
         Bundle args = new Bundle();
-        args.putParcelable(SELECTED_TIMELINE, selectedTimeline);
-        args.putInt(SELECTED_TIMELINE_POSITION, atPosition);
+        args.putParcelable(EDIT_TIMELINE, selectedTimeline);
+        args.putInt(EDIT_TIMELINE_POSITION, atPosition);
         fragment.setArguments(args);
         return fragment;
     }
@@ -70,8 +71,8 @@ public class TimelineEditFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mSelectedTimeline = (Timeline) getArguments().getParcelable(SELECTED_TIMELINE);
-            mSelectedTimelinePosition = getArguments().getInt(SELECTED_TIMELINE_POSITION);
+            mSelectedTimeline = (Timeline) getArguments().getParcelable(EDIT_TIMELINE);
+            mSelectedTimelinePosition = getArguments().getInt(EDIT_TIMELINE_POSITION);
         }
     }
 
@@ -93,6 +94,35 @@ public class TimelineEditFragment extends Fragment {
         mEditDesc = (EditText) rootView.findViewById(R.id.timeline_edit_description);
         mNegativeButton = (Button) rootView.findViewById(R.id.timeline_edit_negative_button);
         mPositiveButton = (Button) rootView.findViewById(R.id.timeline_edit_positive_button);
+
+        if(mSelectedTimeline != null){
+            mImagePager.setVisibility(View.GONE);
+            mAddImageIcon.setVisibility(View.GONE);
+            mImageSingle.setVisibility(View.VISIBLE);
+
+            if(!Utils.isEmpty(mSelectedTimeline.getImageFileName())){
+                LoadImageTask loadImageTask = new LoadImageTask(mSelectedTimeline.getImageFileName());
+                loadImageTask.setListener(new LoadImageTask.Listener() {
+                    @Override
+                    public void onTaskComplete(Bitmap image) {
+                        mImageSingle.setImageBitmap(image);
+                    }
+                });
+                loadImageTask.execute();
+            }
+
+            if(mSelectedTimeline.getColor() != 0){
+                mEditColor.setBackgroundColor(mSelectedTimeline.getColor());
+            }
+
+            if(!Utils.isEmpty(mSelectedTimeline.getTitle())){
+                mEditTitle.setText(mSelectedTimeline.getTitle());
+            }
+
+            if(!Utils.isEmpty(mSelectedTimeline.getDescription())){
+                mEditDesc.setText(mSelectedTimeline.getDescription());
+            }
+        }
 
         mNegativeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -229,8 +259,8 @@ public class TimelineEditFragment extends Fragment {
 
     private void notifyParentFragment(Timeline timeline){
         Intent i = new Intent();
-        i.putExtra(SELECTED_TIMELINE, timeline);
-        i.putExtra(SELECTED_TIMELINE_POSITION, mSelectedTimelinePosition);
+        i.putExtra(EDIT_TIMELINE, timeline);
+        i.putExtra(EDIT_TIMELINE_POSITION, mSelectedTimelinePosition);
         getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, i);
         getActivity().onBackPressed();
     }

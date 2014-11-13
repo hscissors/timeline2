@@ -2,6 +2,7 @@ package com.soundsofpolaris.timeline.timeline;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -12,6 +13,7 @@ import android.widget.PopupMenu;
 import com.soundsofpolaris.timeline.R;
 import com.soundsofpolaris.timeline.base.BaseActivity;
 import com.soundsofpolaris.timeline.event.EventActivity;
+import com.soundsofpolaris.timeline.tasks.LoadImageTask;
 import com.soundsofpolaris.timeline.tools.FileHelper;
 import com.soundsofpolaris.timeline.tools.Utils;
 
@@ -44,7 +46,14 @@ public class TimelineListAdapter extends RecyclerView.Adapter<TimelineListItemVi
         Timeline timeline = mTimelines.get(pos);
 
         if(!Utils.isEmpty(timeline.getImageFileName())) {
-            viewHolder.mThumbnail.setImageBitmap(FileHelper.loadImage(timeline.getImageFileName()));
+            LoadImageTask loadImageTask = new LoadImageTask(timeline.getImageFileName());
+            loadImageTask.setListener(new LoadImageTask.Listener() {
+                @Override
+                public void onTaskComplete(Bitmap image) {
+                    viewHolder.mThumbnail.setImageBitmap(image);
+                }
+            });
+            loadImageTask.execute();
         } else {
             viewHolder.mThumbnail.setVisibility(View.GONE);
         }

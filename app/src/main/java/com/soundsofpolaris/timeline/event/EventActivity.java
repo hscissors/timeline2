@@ -19,13 +19,15 @@ import com.soundsofpolaris.timeline.timeline.TimelineActivity;
 
 public class EventActivity extends BaseActivity implements DrawerLayout.DrawerListener{
 
+    public static final String SELECTED_TIMELINE = "selectedTimeline";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         overridePendingTransition(R.anim.in_right_to_left, R.anim.out_left_to_right);
         setContentView(R.layout.event_activity);
 
-        Timeline selectedTimeline = (Timeline) getIntent().getExtras().getParcelable(TimelineActivity.SELECTED_TIMELINE);
+        Timeline selectedTimeline = (Timeline) getIntent().getExtras().getParcelable(SELECTED_TIMELINE);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()

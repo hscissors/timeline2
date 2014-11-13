@@ -1,15 +1,10 @@
 package com.soundsofpolaris.timeline.dialogs;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,26 +13,11 @@ import android.widget.Button;
 
 import com.soundsofpolaris.timeline.R;
 import com.soundsofpolaris.timeline.base.BaseActivity;
-import com.soundsofpolaris.timeline.debug.Logger;
-import com.soundsofpolaris.timeline.tasks.LoadImagesFromWebTask;
+import com.soundsofpolaris.timeline.tasks.LoadImageURLsTask;
 import com.soundsofpolaris.timeline.tools.FileHelper;
 import com.soundsofpolaris.timeline.tools.Utils;
 
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
-import org.jsoup.select.Elements;
-import org.jsoup.select.NodeVisitor;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class SelectImageSourceDialog extends DialogFragment {
 
@@ -132,7 +112,7 @@ public class SelectImageSourceDialog extends DialogFragment {
         } else {
             ((BaseActivity) getActivity()).showLoader();
             ArrayList<String> imageUrls = new ArrayList();
-            LoadImagesFromWebTask task = new LoadImagesFromWebTask(new LoadImagesFromWebTask.Listener() {
+            LoadImageURLsTask task = new LoadImageURLsTask(new LoadImageURLsTask.Listener() {
                 @Override
                 public void onTaskComplete(ArrayList<String> imageUrls) {
                     if(mListener != null){

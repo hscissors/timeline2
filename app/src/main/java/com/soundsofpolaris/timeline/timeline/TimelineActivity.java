@@ -13,8 +13,6 @@ import com.soundsofpolaris.timeline.base.BaseActivity;
 
 public class TimelineActivity extends BaseActivity {
 
-    public static final String SELECTED_TIMELINE = "selectedTimeline";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

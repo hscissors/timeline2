@@ -19,10 +19,8 @@ import android.widget.RelativeLayout;
 import com.shamanland.fab.FloatingActionButton;
 import com.shamanland.fab.ShowHideOnScroll;
 import com.soundsofpolaris.timeline.R;
-import com.soundsofpolaris.timeline.TimelineApplication;
 import com.soundsofpolaris.timeline.base.BaseActivity;
 import com.soundsofpolaris.timeline.event.EventActivity;
-import com.soundsofpolaris.timeline.event.EventListFragment;
 import com.soundsofpolaris.timeline.tasks.LoadTimelinesTask;
 
 import java.util.List;
@@ -140,7 +138,7 @@ public class TimelineListFragment extends Fragment implements LoadTimelinesTask.
     @Override
     public void onItemClick(int pos) {
         Intent i = new Intent(getActivity(), EventActivity.class);
-        i.putExtra(TimelineActivity.SELECTED_TIMELINE, mTimelines.get(pos));
+        i.putExtra(EventActivity.SELECTED_TIMELINE, mTimelines.get(pos));
         getActivity().startActivity(i);
     }
 
@@ -169,12 +167,12 @@ public class TimelineListFragment extends Fragment implements LoadTimelinesTask.
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Timeline timeline = (Timeline) data.getParcelableExtra(TimelineEditFragment.SELECTED_TIMELINE);
-        int atPosition = data.getIntExtra(TimelineEditFragment.SELECTED_TIMELINE_POSITION, 0);
+        Timeline timeline = (Timeline) data.getParcelableExtra(TimelineEditFragment.EDIT_TIMELINE);
+        int atPosition = data.getIntExtra(TimelineEditFragment.EDIT_TIMELINE_POSITION, 0);
         switch(requestCode){
             case ADD_TIMELINE_REQUEST:
                 mTimelines.add(0, timeline);
-                mTimelineList.getAdapter().notifyItemInserted(0);
+                mTimelineList.getAdapter().notifyDataSetChanged();
                 break;
             case EDIT_TIMELINE_REQUEST:
                 mTimelines.add(atPosition, timeline);

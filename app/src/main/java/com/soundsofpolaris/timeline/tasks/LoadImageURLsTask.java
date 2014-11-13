@@ -17,7 +17,7 @@ import java.util.ArrayList;
 /**
  * Created by hscissors on 11/4/14.
  */
-public class LoadImagesFromWebTask extends AsyncTask<String, Void, ArrayList<String>> {
+public class LoadImageURLsTask extends AsyncTask<String, Void, ArrayList<String>> {
         private static final String SIZE = "m"; // M or L
         private static final String IMAGE_A_SELECTOR = "a.rg_l";
         private static final String USER_AGENT = "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.114 Safari/537.36";
@@ -28,7 +28,7 @@ public class LoadImagesFromWebTask extends AsyncTask<String, Void, ArrayList<Str
             public void onTaskComplete(ArrayList<String> imageUrls);
         }
 
-        public LoadImagesFromWebTask(Listener listener){
+        public LoadImageURLsTask(Listener listener){
             mListener = listener;
         }
 
