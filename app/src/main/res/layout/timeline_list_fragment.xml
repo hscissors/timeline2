@@ -3,6 +3,8 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent">
 
+    <include layout="@layout/empty_message"></include>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/timeline_list"
         android:clipToPadding="false"

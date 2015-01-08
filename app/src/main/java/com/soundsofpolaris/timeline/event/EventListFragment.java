@@ -14,7 +14,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.shamanland.fab.FloatingActionButton;
 import com.shamanland.fab.ShowHideOnScroll;
@@ -22,6 +24,7 @@ import com.soundsofpolaris.timeline.R;
 import com.soundsofpolaris.timeline.TimelineApplication;
 import com.soundsofpolaris.timeline.base.BaseActivity;
 import com.soundsofpolaris.timeline.gui.StickyRecyclerHeadersDecoration;
+import com.soundsofpolaris.timeline.tasks.LoadEventsTask;
 import com.soundsofpolaris.timeline.timeline.Timeline;
 import com.soundsofpolaris.timeline.timeline.TimelineEditFragment;
 import com.soundsofpolaris.timeline.tools.DatabaseHelper;
@@ -29,8 +32,12 @@ import com.soundsofpolaris.timeline.tools.DatabaseHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EventListFragment extends Fragment {
+public class EventListFragment extends Fragment implements LoadEventsTask.Listener{
     private static final String SELECTED_TIMELINE = "selected_timeline";
+
+    private RelativeLayout mEmptyMessageContainer;
+    private RecyclerView mEventList;
+    private EventListAdapter mEventListAdpater;
 
     private Timeline mSelectedTimeline;
 
@@ -61,9 +68,6 @@ public class EventListFragment extends Fragment {
 
         RelativeLayout rootView = (RelativeLayout) inflater.inflate(R.layout.event_list_fragment, container, false);
 
-        //TODO task?
-        List<Event> events = TimelineApplication.getInstance().getDatabaseHelper().getAllEventsByTimeline(mSelectedTimeline.getId());
-
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -77,13 +81,18 @@ public class EventListFragment extends Fragment {
             }
         });
 
-        RecyclerView mEventList = (RecyclerView) rootView.findViewById(R.id.event_list);
-//        mEventList.setHasFixedSize(true);
-        EventListAdapter eventListAdapter = new EventListAdapter(events);
-        mEventList.setAdapter(eventListAdapter);
+        mEmptyMessageContainer = (RelativeLayout) rootView.findViewById(R.id.empty_message_container);
+        TextView emptyMessage = (TextView) rootView.findViewById(R.id.empty_message);
+        emptyMessage.setText(getString(R.string.empty_events));
+
+        mEventList = (RecyclerView) rootView.findViewById(R.id.event_list);
         mEventList.setOnTouchListener(new ShowHideOnScroll(fab));
-        mEventList.addItemDecoration(new StickyRecyclerHeadersDecoration(eventListAdapter));
         mEventList.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        LoadEventsTask task = new LoadEventsTask(mSelectedTimeline.getId());
+        task.setListener(this);
+
+        task.execute();
 
         return rootView;
     }
@@ -109,5 +118,31 @@ public class EventListFragment extends Fragment {
         });
 
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onTaskComplete(List<Event> events) {
+
+        mEventListAdpater = new EventListAdapter(events);
+        mEventListAdpater.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                checkAdapterIsEmpty();
+            }
+        });
+
+        mEventList.setAdapter(mEventListAdpater);
+        mEventList.addItemDecoration(new StickyRecyclerHeadersDecoration(mEventListAdpater));
+
+        checkAdapterIsEmpty();
+    }
+
+    private void checkAdapterIsEmpty(){
+        if(mEventListAdpater != null && mEventListAdpater.getItemCount() > 0){
+            mEmptyMessageContainer.setVisibility(View.GONE);
+        }  else {
+            mEmptyMessageContainer.setVisibility(View.VISIBLE);
+        }
     }
 }

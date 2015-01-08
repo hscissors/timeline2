@@ -17,6 +17,9 @@
     <color name="loading_screen_bg">#bb000000</color>
     <color name="loading_screen_progress_bg">#000000</color>
 
+    <color name="empty_message_border">#cccccc</color>
+    <color name="empty_message_bg">#d6d6d6</color>
+
     <!-- UNUSED -->
 
 

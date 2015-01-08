@@ -87,7 +87,8 @@
             android:id="@+id/event_edit_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:inputType="textCapWords"/>
 
         <EditText
             android:layout_below="@id/event_edit_title"
@@ -100,7 +101,8 @@
             android:id="@+id/event_edit_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Description" />
+            android:hint="Description"
+            android:inputType="textCapSentences"/>
 
         <LinearLayout
             android:layout_below="@id/event_edit_description"

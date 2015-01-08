@@ -9,15 +9,15 @@ public class Timeline implements Parcelable{
     private String mDesc;
     private int mColor;
     private String mImageFileName;
+    private int mTotalEvents;
 
-    private boolean mSelected = false;
-
-    public Timeline(long gid, String title, String desc, int color, String imageFileName) {
+    public Timeline(long gid, String title, String desc, int color, String imageFileName, int totalEvents) {
         mGid = gid;
         mTitle = title;
         mDesc = desc;
         mColor = color;
         mImageFileName = imageFileName;
+        mTotalEvents = totalEvents;
     }
 
     public long getId() {
@@ -40,13 +40,7 @@ public class Timeline implements Parcelable{
         return mImageFileName;
     }
 
-    public boolean getSelected() {
-        return mSelected;
-    }
-
-    public void setSelected(boolean selected) {
-        mSelected = selected;
-    }
+    public int getTotalEvents(){ return mTotalEvents; }
 
     @Override
     public int describeContents() {
@@ -60,11 +54,12 @@ public class Timeline implements Parcelable{
         out.writeString(mDesc);
         out.writeInt(mColor);
         out.writeString(mImageFileName);
+        out.writeInt(mTotalEvents);
     }
 
     public static final Parcelable.Creator<Timeline> CREATOR = new Parcelable.Creator<Timeline>() {
         public Timeline createFromParcel(Parcel in) {
-            return new Timeline(in.readLong(), in.readString(), in.readString(), in.readInt(), in.readString());
+            return new Timeline(in.readLong(), in.readString(), in.readString(), in.readInt(), in.readString(), in.readInt());
         }
 
         public Timeline[] newArray(int size) {

@@ -25,6 +25,7 @@ public class TimelineListItemViewHolder extends RecyclerView.ViewHolder {
     public final FrameLayout mColor;
     public final TextView mTitle;
     public final TextView mDesc;
+    public final TextView mTotalEvents;
     public final ImageButton mItemMenuButton;
 
     public TimelineListItemViewHolder(View v) {
@@ -35,6 +36,7 @@ public class TimelineListItemViewHolder extends RecyclerView.ViewHolder {
         mColor = (FrameLayout) v.findViewById(R.id.timeline_color);
         mTitle = (TextView) v.findViewById(R.id.timeline_title);
         mDesc = (TextView) v.findViewById(R.id.timeline_desc);
+        mTotalEvents = (TextView) v.findViewById(R.id.timeline_total_events);
         mItemMenuButton = (ImageButton) v.findViewById(R.id.timeline_list_item_menu_button);
     }
 }

@@ -38,12 +38,13 @@ public class EventActivity extends BaseActivity implements DrawerLayout.DrawerLi
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawerLayout.setDrawerListener(this);
-        drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+//        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+//        drawerLayout.setDrawerListener(this);
+//        drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setTitle(selectedTimeline.getTitle());
 
         //TODO load timelines, excluding selected
         //ListView linkedTimelineList = (ListView) findViewById(R.id.linked_timeline_list);

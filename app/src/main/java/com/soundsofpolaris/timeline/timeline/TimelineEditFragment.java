@@ -23,6 +23,7 @@ import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.soundsofpolaris.timeline.R;
+import com.soundsofpolaris.timeline.TimelineApplication;
 import com.soundsofpolaris.timeline.base.BaseActivity;
 import com.soundsofpolaris.timeline.dialogs.MessageDialog;
 import com.soundsofpolaris.timeline.dialogs.SelectImageSourceDialog;
@@ -95,6 +96,7 @@ public class TimelineEditFragment extends Fragment {
         mNegativeButton = (Button) rootView.findViewById(R.id.timeline_edit_negative_button);
         mPositiveButton = (Button) rootView.findViewById(R.id.timeline_edit_positive_button);
 
+
         if(mSelectedTimeline != null){
             mImagePager.setVisibility(View.GONE);
             mAddImageIcon.setVisibility(View.GONE);
@@ -127,6 +129,9 @@ public class TimelineEditFragment extends Fragment {
         mNegativeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(mSelectedTimeline != null){
+                    TimelineApplication.getInstance().getDatabaseHelper().deleteTimeline(mSelectedTimeline.getId());
+                }
                 getActivity().onBackPressed();
             }
         });
@@ -162,6 +167,8 @@ public class TimelineEditFragment extends Fragment {
                 ColorDrawable colorDrawable = (ColorDrawable) mEditColor.getBackground();
                 int color = colorDrawable.getColor();
 
+                ((BaseActivity) getActivity()).showLoader();
+
                 if(mSelectedTimeline == null) {
                     AddTimelineTask task = new AddTimelineTask(title, desc, color, imageFileName, bitmap);
                     task.setListener(new AddTimelineTask.Listener() {
@@ -174,7 +181,14 @@ public class TimelineEditFragment extends Fragment {
 
                     task.execute();
                 } else {
-                    EditTimelineTask task = new EditTimelineTask(mSelectedTimeline.getId(), title, desc, color, imageFileName, bitmap);
+                    EditTimelineTask task = new EditTimelineTask(
+                            mSelectedTimeline.getId(),
+                            title,
+                            desc,
+                            color,
+                            imageFileName,
+                            bitmap,
+                            mSelectedTimeline.getTotalEvents());
                     task.setListener(new EditTimelineTask.Listener() {
 
                         @Override

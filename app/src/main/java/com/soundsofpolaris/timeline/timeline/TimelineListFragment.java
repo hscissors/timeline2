@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.shamanland.fab.FloatingActionButton;
 import com.shamanland.fab.ShowHideOnScroll;
@@ -30,7 +31,10 @@ public class TimelineListFragment extends Fragment implements LoadTimelinesTask.
     private static final int EDIT_TIMELINE_REQUEST = 1;
     private static final int ADD_TIMELINE_REQUEST = 2;
 
+    private RelativeLayout mEmptyMessageContainer;
+
     private RecyclerView mTimelineList;
+    private TimelineListAdapter mTimelineListAdapter;
     private List<Timeline> mTimelines;
 
     public static TimelineListFragment newInstance() {
@@ -56,8 +60,11 @@ public class TimelineListFragment extends Fragment implements LoadTimelinesTask.
         final RelativeLayout rootView = (RelativeLayout) inflater.inflate(R.layout.timeline_list_fragment, container, false);
 
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
-
         fab.setOnClickListener(this);
+
+        mEmptyMessageContainer = (RelativeLayout) rootView.findViewById(R.id.empty_message_container);
+        TextView emptyMessage = (TextView) rootView.findViewById(R.id.empty_message);
+        emptyMessage.setText(getString(R.string.empty_timelines));
 
         mTimelineList = (RecyclerView) rootView.findViewById(R.id.timeline_list);
         mTimelineList.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -111,10 +118,30 @@ public class TimelineListFragment extends Fragment implements LoadTimelinesTask.
     @Override
     public void onTaskComplete(List<Timeline> timelines) {
         mTimelines = timelines;
-        TimelineListAdapter timelineListAdapter = new TimelineListAdapter(mTimelines);
-        timelineListAdapter.setOnItemClickListener(this);
-        mTimelineList.setAdapter(timelineListAdapter);
+
+        mTimelineListAdapter = new TimelineListAdapter(mTimelines);
+        mTimelineListAdapter.setOnItemClickListener(this);
+        mTimelineListAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                checkAdapterIsEmpty();
+            }
+        });
+
+        mTimelineList.setAdapter(mTimelineListAdapter);
+
+        checkAdapterIsEmpty();
+
         ((BaseActivity) getActivity()).hideLoader();
+    }
+
+    private void checkAdapterIsEmpty(){
+        if(mTimelineListAdapter != null && mTimelineListAdapter.getItemCount() > 0){
+            mEmptyMessageContainer.setVisibility(View.GONE);
+        }  else {
+            mEmptyMessageContainer.setVisibility(View.VISIBLE);
+        }
     }
 
     //On fab selected
@@ -167,6 +194,9 @@ public class TimelineListFragment extends Fragment implements LoadTimelinesTask.
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        ((BaseActivity) getActivity()).hideLoader();
+
         Timeline timeline = (Timeline) data.getParcelableExtra(TimelineEditFragment.EDIT_TIMELINE);
         int atPosition = data.getIntExtra(TimelineEditFragment.EDIT_TIMELINE_POSITION, 0);
         switch(requestCode){

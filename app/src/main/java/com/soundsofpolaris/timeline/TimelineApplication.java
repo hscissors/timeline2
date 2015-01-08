@@ -60,24 +60,6 @@ public class TimelineApplication extends Application {
             mDatabaseHelper.updateDatabase(); //1.2.0 -- Used to add new column and "fix" date column
         }
 
-        final String imageUrl = "http://apod.nasa.gov/apod/image/0811/horsehead_caelum.jpg";
-        final String fileName = imageUrl.substring(imageUrl.lastIndexOf('/') + 1);
-        addToRequestQueue(
-                new ImageRequest(
-                        imageUrl,
-                    new Response.Listener<Bitmap>() {
-                        @Override
-                        public void onResponse(Bitmap response) {
-                            FileHelper.saveImage(fileName, response);
-                        }
-                    }, 1000, 1000, Bitmap.Config.ARGB_8888, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Logger.v(TAG, "Volley error with image: " + error.getMessage());
-                    }
-                })
-        );
-
         mInstance = this;
     }
 

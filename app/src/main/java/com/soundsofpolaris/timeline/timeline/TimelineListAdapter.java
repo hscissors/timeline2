@@ -61,11 +61,14 @@ public class TimelineListAdapter extends RecyclerView.Adapter<TimelineListItemVi
         viewHolder.mColor.setBackgroundColor(timeline.getColor());
 
         viewHolder.mTitle.setText(timeline.getTitle());
+
         if(!Utils.isEmpty(timeline.getDescription())){
             viewHolder.mDesc.setText(timeline.getDescription());
         } else {
             viewHolder.mDesc.setVisibility(View.GONE);
         }
+
+        viewHolder.mTotalEvents.setText(String.valueOf(timeline.getTotalEvents()));
 
         viewHolder.mCardLayout.setOnClickListener(new View.OnClickListener() {
             @Override

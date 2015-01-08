@@ -58,16 +58,28 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="20dp"
-                    android:text="description" />
+                    android:text="description"/>
 
                 <TextView
-                    android:id="@+id/timeline_event_count"
+                    android:id="@+id/timeline_total_events_desc"
                     android:fontFamily="sans-serif-light"
                     android:textColor="@color/empty_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/timeline_desc"
-                    android:text="Total Events: 10" />
+                    android:text="@string/total_events"/>
+
+                <TextView
+                    android:id="@+id/timeline_total_events"
+                    android:fontFamily="sans-serif-light"
+                    android:textColor="@color/empty_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/timeline_desc"
+                    android:layout_alignBaseline="@id/timeline_total_events_desc"
+                    android:layout_toRightOf="@id/timeline_total_events_desc"
+                    android:paddingLeft="2dp"
+                    android:text="-1" />
             </RelativeLayout>
 
             <ImageButton

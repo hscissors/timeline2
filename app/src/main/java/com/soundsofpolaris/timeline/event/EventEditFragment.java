@@ -1,6 +1,8 @@
 package com.soundsofpolaris.timeline.event;
 
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.InputFilter;
@@ -31,6 +33,9 @@ import java.util.Locale;
 public class EventEditFragment extends Fragment {
 
     private static final String PARENT_TIMELINE = "parentTimeline";
+
+    public static final String EDIT_EVENT = "edit_event";
+    public static final String EDIT_EVENT_POSITION = "edit_event_position";
 
     private Timeline mParentTimeline;
 
@@ -260,5 +265,13 @@ public class EventEditFragment extends Fragment {
         private boolean isInRange(int a, int b, int c) {
             return b > a ? c >= a && c <= b : c >= b && c <= a;
         }
+    }
+
+    private void notifyParentFragment(Timeline timeline){
+        Intent i = new Intent();
+        i.putExtra(EDIT_EVENT, timeline);
+        //i.putExtra(EDIT_EVENT_POSITION, mSelectedEventPosition);
+        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, i);
+        getActivity().onBackPressed();
     }
 }

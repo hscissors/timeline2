@@ -21,14 +21,16 @@ public class EditTimelineTask extends AsyncTask<Void, Void, Timeline> {
     private int mColor;
     private String mImageFileName;
     private Bitmap mImage;
+    private int mTotalEvents;
 
-    public EditTimelineTask(long gid, String title, String desc, int color, String imageFileName, Bitmap image) {
+    public EditTimelineTask(long gid, String title, String desc, int color, String imageFileName, Bitmap image, int totalEvents) {
         mGid = gid;
         mTitle = title;
         mDesc = desc;
         mColor = color;
         mImageFileName = imageFileName;
         mImage = image;
+        mTotalEvents = totalEvents;
     }
 
 
@@ -42,7 +44,7 @@ public class EditTimelineTask extends AsyncTask<Void, Void, Timeline> {
             FileHelper.saveImage(mImageFileName, mImage);
         }
 
-        return TimelineApplication.getInstance().getDatabaseHelper().updateTimeline(mGid, mTitle, mDesc, mColor, mImageFileName);
+        return TimelineApplication.getInstance().getDatabaseHelper().updateTimeline(mGid, mTitle, mDesc, mColor, mImageFileName, mTotalEvents);
     }
 
     @Override
